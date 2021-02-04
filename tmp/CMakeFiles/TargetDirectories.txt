@@ -1,4 +1,0 @@
-/home/justdprroz/AwesomeSnake/tmp/CMakeFiles/rebuild_cache.dir
-/home/justdprroz/AwesomeSnake/tmp/CMakeFiles/edit_cache.dir
-/home/justdprroz/AwesomeSnake/tmp/CMakeFiles/snakeserver.dir
-/home/justdprroz/AwesomeSnake/tmp/CMakeFiles/snakeclient.dir
