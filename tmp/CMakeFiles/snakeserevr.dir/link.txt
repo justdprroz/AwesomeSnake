@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/snakeserevr.dir/source/snakeserver.cpp.o CMakeFiles/snakeserevr.dir/source/snake.cpp.o -o ../build/snakeserevr 

@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/snake.hpp
+ctime
+-
+unistd.h
+-
+sys/socket.h
+-
+arpa/inet.h
+-
+SFML/Graphics.hpp
+-
+iostream
+-
+
+/home/justdprroz/AwesomeSnake/source/snake.cpp
+snake.hpp
+/home/justdprroz/AwesomeSnake/source/snake.hpp
+
