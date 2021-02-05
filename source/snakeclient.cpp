@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include "snake.hpp"
-#define IP "127.0.0.1"
+#define IP "192.168.1.40"
 #define PORT 21090
 
 int main(int argc, char const *argv[]) 
@@ -23,8 +23,6 @@ int main(int argc, char const *argv[])
 	sf::View view;
 	view.setSize(sf::Vector2f(Width, Height));
 	SnakeGame game;
-	// game.getStatic(sock);
-	// game.getDynamic(sock);
 	game.get(sock);
 	window.setView(view);
 	while (window.isOpen())
