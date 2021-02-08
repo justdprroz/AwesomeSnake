@@ -252,6 +252,9 @@ void Snake::handleEvents(sf::Event e){
 }
 
 void Snake::Update(){
+	if(session->tryEat(POS.first, POS.second)){
+		AddPart();
+	}
 	LPOS = POS;
 	switch (DIR)
 	{
@@ -283,9 +286,6 @@ void Snake::Update(){
 			PARTS[i] = LPOS;
 			LPOS = prev2;
 		}
-	}
-	if(session->tryEat(POS.first, POS.second)){
-		AddPart();
 	}
 }
 
