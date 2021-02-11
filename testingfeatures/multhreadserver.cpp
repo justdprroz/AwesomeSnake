@@ -9,12 +9,12 @@
 
 #define TRUE 1
 #define FALSE 0
-#define PORT 21090
+#define PORT 8888
 
 int main(int argc , char *argv[])   
 {
     int opt = TRUE;
-    int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30, activity, i, valread, sd;
+    int master_socket, addrlen, new_socket, client_socket[30], max_clients = 30, activity, i, valread, sd, sockets_number = 0;
     int max_sd;
     struct sockaddr_in address;
     fd_set readfds;
@@ -64,29 +64,16 @@ int main(int argc , char *argv[])
             {
                 if(client_socket[i] == 0)
                 {
+                    sockets_number++;
                     client_socket[i] = new_socket;
                     printf("Adding to list of sockets as %d\n" , i);
                     break;
                 }
             }
         }
-        for (i = 0; i < max_clients; i++)
-        {
-            sd = client_socket[i];
-            if (FD_ISSET( sd , &readfds))
-            {
-                if ((valread = read( sd , nullptr, 1024)) == 0)
-                {
-                    getpeername(sd, (struct sockaddr*)&address, (socklen_t*)&addrlen);
-                    printf("Host disconnected , ip %s , port %d \n", inet_ntoa(address.sin_addr), ntohs(address.sin_port));
-                    close(sd);
-                    client_socket[i] = 0;
-                }
-                else
-                {
-                    send(sd, buffer, strlen(buffer), 0);
-                }
-            }
+        for(int i = 0; i < sockets_number; i++){
+            write(client_socket[i], &i, sizeof(i));
+            std::cout << i << "\n";
         }
     }
     std::cout << "Hello\n";

@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #define IP "127.0.0.1"
-#define PORT 8080
+#define PORT 8888
 int main(int argc, char const *argv[]) 
 { 
 	int sock = 0; 
@@ -14,11 +14,12 @@ int main(int argc, char const *argv[])
 	inet_pton(AF_INET, IP, &serv_addr.sin_addr);
 	connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
     int myint = atoi(argv[1]);
-    for(int i = 0; i < 1000; i++){
+    while (true) {
         myint++;
         write(sock, &myint, sizeof(myint));
         read(sock, &myint, sizeof(myint));
 	    std::cout << myint << '\n';
     }
+	std::cout << "So sad((\n";
 	return 0;
 } 
