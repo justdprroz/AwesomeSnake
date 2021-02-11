@@ -32,73 +32,38 @@ Snake* SnakeGame::getsnakeptr(int id){
 void SnakeGame::get(int s){
 	int sig = 0;
 	write(s, &sig, sizeof(0));
-	// std::cout << "signal sent: " << 0 << '\n';
 
 	read(s, &W, sizeof(W));
-	// std::cout << "got W " << W << '\n';
 	read(s, &H, sizeof(H));
-	// std::cout << "got H " << H << '\n';
 	read(s, &SnakesAmount, sizeof(SnakesAmount));
-	// std::cout << "got SnakesAmount " << SnakesAmount << '\n';
 	read(s, &FruitsAmount, sizeof(FruitsAmount));
-	// std::cout << "got FruitsAmount " << FruitsAmount << '\n';
 	delete[] FRUITSARR;
 	FRUITSARR = new std::pair<int, int>[FruitsAmount];
 	for(int i = 0; i < FruitsAmount; i++){
 		read(s, &FRUITSARR[i], sizeof(FRUITSARR[i]));
-		// std::cout << "got fruit coordinate of fruit " << i << ':' << FRUITSARR[i].first << ' ' << FRUITSARR[i].second << '\n';
 	}
 	delete[] SNAKES;
 	SNAKES = new Snake*[SnakesAmount];
 	for(int i = 0; i < SnakesAmount; i++){
 		SNAKES[i] = new Snake(this, i);
 		SNAKES[i]->getStatic(s);
-		// std::cout << "got snake static " << i << '\n';
 		SNAKES[i]->getDynamic(s);
-		// std::cout << "got snake dynamic " << i << '\n';
-		// std::cout << "got Snake " << i << '\n';
 	}
 }
 
 void SnakeGame::send(int s){
 	int tfa = FruitsAmount, tsa = SnakesAmount;
 	write(s, &W, sizeof(W));
-	// std::cout << "sent W " << W << '\n';
 	write(s, &H, sizeof(H));
-	// std::cout << "sent H " << H << '\n';
 	write(s, &SnakesAmount, sizeof(SnakesAmount));
-	// std::cout << "sent SnakesAmount " << SnakesAmount << '\n';
 	write(s, &FruitsAmount, sizeof(FruitsAmount));
-	// std::cout << "sent FruitsAmount " << FruitsAmount << '\n';
 	for(int i = 0; i < tfa; i++){
 		write(s, &FRUITSARR[i], sizeof(FRUITSARR[i]));
-		// std::cout << "sent fruit coordinate of fruit " << i << ':' << FRUITSARR[i].first << ' ' << FRUITSARR[i].second << '\n';
 	}
 	for(int i = 0; i < tsa; i++){
 		SNAKES[i]->sendStatic(s);
-		// std::cout << "sent snake static " << i << '\n';
 		SNAKES[i]->sendDynamic(s);
-		// std::cout << "sent snake dynamic " << i << '\n';
-		// std::cout << "sent snake " << i << '\n';
 	}
-}
-
-void SnakeGame::getStatic(int s){
-}
-
-void SnakeGame::getDynamic(int s){
-}
-
-void SnakeGame::getSnake(int s, int i){
-}
-
-void SnakeGame::sendStatic(int s){
-}
-
-void SnakeGame::sendDynamic(int s){
-}
-void SnakeGame::sendSnake(int s, int i){
-
 }
 
 void SnakeGame::Draw(sf::RenderWindow* w, int msnakeid){
@@ -149,7 +114,6 @@ int SnakeGame::getIndex(int i){
 void SnakeGame::sendSnakeDir(int sock, Directon dir, int id){
 	int sig = 3;
 	write(sock, &sig, sizeof(3));
-	// std::cout << "signal sent: 3\n";
 	write(sock, &id, sizeof(id));
 	write(sock, &dir, sizeof(dir));
 }
@@ -184,13 +148,9 @@ std::pair<int, int> SnakeGame::getSize(){
 
 void Snake::getStatic(int s){
 	read(s, &DIR, sizeof(DIR));
-	// std::cout << "got DIR " << DIR << '\n';
 	read(s, &ID, sizeof(ID));
-	// std::cout << "got ID " << ID << '\n';
 	read(s, &POS, sizeof(POS));
-	// std::cout << "got POS " << POS.first << ' ' << POS.second << '\n';
 	read(s, &LEN, sizeof(LEN));
-	// std::cout << "got LEN " << LEN << '\n';
 }
 
 void Snake::getDynamic(int s){
@@ -198,25 +158,19 @@ void Snake::getDynamic(int s){
 	PARTS = new std::pair<int, int>[LEN];
 	for(int i = 0; i < LEN; i++){
 		read(s, &PARTS[i], sizeof(PARTS[i]));
-		// std::cout << "got PART " << i << " coords " << PARTS[i].first << ' ' << PARTS[i].second << '\n';
 	}
 }
 
 void Snake::sendStatic(int s){
 	write(s, &DIR, sizeof(DIR));
-	// std::cout << "sent DIR " << DIR << '\n';
 	write(s, &ID, sizeof(ID));
-	// std::cout << "sent ID " << ID << '\n';
 	write(s, &POS, sizeof(POS));
-	// std::cout << "sent POS " << POS.first << ' '  << POS.second << '\n';
 	write(s, &LEN, sizeof(LEN));
-	// std::cout << "sent LEN " << LEN << '\n';
 }
 
 void Snake::sendDynamic(int s){
 	for(int i = 0; i < LEN; i++){
 		write(s, &PARTS[i], sizeof(PARTS[i]));
-		// std::cout << "sent PART " << i << " coords " << PARTS[i].first << ' ' << PARTS[i].second << '\n';
 	}	
 }
 
