@@ -3,8 +3,8 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include "snake.hpp"
-#define IP "127.0.0.1"
-#define PORT 21090
+// #define IP "192.168.1.50"
+// #define PORT 51090
 
 int main(int argc, char const *argv[]) 
 { 
@@ -12,8 +12,8 @@ int main(int argc, char const *argv[])
 	struct sockaddr_in serv_addr;  
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(PORT);	
-	inet_pton(AF_INET, IP, &serv_addr.sin_addr);
+	serv_addr.sin_port = htons(atoi(argv[2]));
+	inet_pton(AF_INET, argv[1], &serv_addr.sin_addr);
 	connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 	write(sock, new int(100), sizeof(100));
 	int id;

@@ -5,8 +5,8 @@
 #include <thread>
 #include <chrono>
 #include "snake.hpp"
-#define IP "127.0.0.1"
-#define PORT 21090
+// #define IP "192.168.1.50"
+// #define PORT 51090
 
 int serverSocket, newSocket;
 sockaddr_in address;
@@ -52,8 +52,8 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
 	serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	address.sin_family = AF_INET; 
-	address.sin_port = htons(PORT);
-	address.sin_addr.s_addr = inet_addr(IP);
+	address.sin_port = htons(atoi(argv[2]));
+	address.sin_addr.s_addr = inet_addr(argv[1]);
 
     bind(serverSocket, (struct sockaddr *)&address, sizeof(address));
     listen(serverSocket, 50);
