@@ -11,7 +11,7 @@ class SnakeGame{
 public:
     SnakeGame();
     int addSnake();
-    void removeSnake(Snake* S_ptr);
+    void removeSnake(int id);
     void Draw(sf::RenderWindow* w, int msnakeid);
     void Step();
     int tryEat(int x, int y);
@@ -28,10 +28,10 @@ public:
     void sendStatic(int s);
     void sendDynamic(int s);
     void sendSnake(int s, int i);    
-    void sendSnakeDir(int sock, Directon d, int id);
+    void sendSnakeDir(int sock, int id);
     void getSnakeDir(int sock);
-    Snake** SNAKES;
 private:
+    Snake** SNAKES;
     int W, H;
     int SnakesAmount;
     int FruitsAmount;
@@ -51,8 +51,10 @@ public:
     void sendStatic(int s);
     void sendDynamic(int s);
     int getId();
-    Directon DIR;
+    void setDir(Directon d);
+    Directon getDir();
 private:
+    Directon DIR;
     int ID;
     bool alive;
     std::pair<int,int> POS;

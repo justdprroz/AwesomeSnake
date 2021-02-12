@@ -103,6 +103,21 @@ int SnakeGame::tryEat(int x, int y){
 	return 0;
 }
 
+void SnakeGame::removeSnake(int id){
+	SnakesAmount--;
+	Snake** tmp = new Snake*[SnakesAmount];
+	int o;
+	for(int i = 1; i <= SnakesAmount; i++){
+		if(i == id){
+			o = 1;
+			continue;
+		}
+		tmp[i - o] = SNAKES[i];
+	}
+	delete[] SNAKES;
+	SNAKES = tmp;
+}
+
 int SnakeGame::getIndex(int i){
 	for(int j = 0; j < SnakesAmount; j++){
 		if(SNAKES[j]->getId() == i)
@@ -111,17 +126,21 @@ int SnakeGame::getIndex(int i){
 	return -1;
 }
 
-void SnakeGame::sendSnakeDir(int sock, Directon dir, int id){
+void SnakeGame::sendSnakeDir(int sock, int id){
 	int sig = 3;
 	write(sock, &sig, sizeof(3));
 	write(sock, &id, sizeof(id));
-	write(sock, &dir, sizeof(dir));
+	Directon t;
+	t = SNAKES[getIndex(id)]->getDir();
+	write(sock, &t, sizeof(t));
 }
 
 void SnakeGame::getSnakeDir(int sock){
 	int id;
 	read(sock, &id, sizeof(id));
-	read(sock, &SNAKES[getIndex(id)]->DIR, sizeof(Directon));
+	Directon t;
+	read(sock, &t, sizeof(Directon));
+	SNAKES[getIndex(id)]->setDir(t);
 }
 
 int SnakeGame::addSnake(){
@@ -203,6 +222,14 @@ void Snake::handleEvents(sf::Event e){
 			DIR = L;
 		}
 	}
+}
+
+void Snake::setDir(Directon d){
+	DIR = d;
+}
+
+Directon Snake::getDir(){
+	return DIR;
 }
 
 void Snake::Update(){

@@ -7,42 +7,37 @@
 #include "snake.hpp"
 #define IP "127.0.0.1"
 #define PORT 21090
-struct sockaddr_in address;
-int server_fd, new_socket, opt = 1, addrlen = sizeof(address);
 
+int serverSocket, newSocket;
+sockaddr_in address;
+sockaddr_storage serverStorage;
+socklen_t addr_size;
 SnakeGame game;
-void commsock(int sock);
-void communicate(){
-    while(1){
-        new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen);
-        std::cout << new_socket << '\n';
-        std::thread(commsock, new_socket).join();
-    }
-}
 
-void commsock(int sock){
+void commsock(int arg){
+    int newSocket = arg;
     int sig = 0;
     while (true)
     {
-        read(new_socket, &sig, sizeof(sig));
+        read(newSocket, &sig, sizeof(sig));
         if(sig == 0){
-            game.send(new_socket);
+            game.send(newSocket);
         }
         if(sig == 3){
-            game.getSnakeDir(new_socket);
+            game.getSnakeDir(newSocket);
         }
-        
         if(sig == 100){
             int id = game.addSnake();
-            write(new_socket, &id, sizeof(id));
+            write(newSocket, &id, sizeof(id));
         }
         if(sig == -100){
-            close(new_socket);
-            std::terminate();
+            close(newSocket);
+            int id;
+            read(newSocket, &id, sizeof(id));
+            game.removeSnake(id);
         }
         sig = -1000;
     }
-    
 }
 
 void logic(){
@@ -55,16 +50,20 @@ void logic(){
 int main(int argc, char const *argv[]) 
 {   
     srand(time(NULL));
-	server_fd = socket(AF_INET, SOCK_STREAM, 0);
-	setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
+	serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	address.sin_family = AF_INET; 
-	address.sin_addr.s_addr = INADDR_ANY; 
 	address.sin_port = htons(PORT);
-    bind(server_fd, (struct sockaddr *)&address, sizeof(address));
-    listen(server_fd, 3);
-    std::thread com(communicate);
+	address.sin_addr.s_addr = inet_addr(IP);
+
+    bind(serverSocket, (struct sockaddr *)&address, sizeof(address));
+    listen(serverSocket, 50);
+
     std::thread log(logic);
-    com.join();
-    log.join();
+    
+    while(1) {
+        addr_size = sizeof(serverStorage);
+        newSocket = accept(serverSocket, (struct sockaddr *)&serverStorage, (socklen_t*)&addr_size);
+        std::thread(commsock, newSocket).detach();
+    }
 	return 0;
 }

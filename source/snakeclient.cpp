@@ -3,7 +3,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include "snake.hpp"
-#define IP "192.168.1.40"
+#define IP "127.0.0.1"
 #define PORT 21090
 
 int main(int argc, char const *argv[]) 
@@ -35,6 +35,7 @@ int main(int argc, char const *argv[])
             if (event.type == sf::Event::Closed){
 				int s = -100;
 				write(sock, &s, sizeof(s));
+				write(sock, &id, sizeof(id - 1));	
                 window.close();
 				return 0;
 			}
@@ -43,11 +44,7 @@ int main(int argc, char const *argv[])
 				window.setView(sf::View(visibleArea));
 			}
         }
-		Directon d;
-		d = game.SNAKES[game.getIndex(s->getId())]->DIR;
-		game.sendSnakeDir(sock, d, s->getId());
-		// game.getStatic(sock);
-		// game.getDynamic(sock);
+		game.sendSnakeDir(sock, s->getId());
 		game.get(sock);
 		game.Draw(&window, s->getId());
     }
