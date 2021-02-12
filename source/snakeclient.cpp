@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
 	window.setView(view);
 	while (window.isOpen())
     {	
-		Snake* s = game.getsnakeptr(id);
+		Snake* s = game.getSnakePtr(id);
         sf::Event event;
         while (window.pollEvent(event))
         {	
@@ -46,7 +46,7 @@ int main(int argc, char const *argv[])
         }
 		game.sendSnakeDir(sock, s->getId());
 		game.get(sock);
-		game.Draw(&window, s->getId());
+		game.draw(&window, s->getId());
     }
 	return 0;
 } 

@@ -42,7 +42,7 @@ void commsock(int arg){
 
 void logic(){
     while(true){
-        game.Step();
+        game.step();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }

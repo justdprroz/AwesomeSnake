@@ -6,10 +6,43 @@ SnakeGame::SnakeGame(){
 	SnakesAmount = 0;
 	FruitsAmount = 0;
 	FRUITSARR = new std::pair<int, int>[1];
-	SNAKES = new Snake*[1];
+	SNAKES = new Snake*;
 }
 
-void SnakeGame::AddFruit(){
+int SnakeGame::addSnake(){
+	SnakesAmount++;
+	if(FruitsAmount < SnakesAmount)
+		addFruit();
+	Snake** tmp = new Snake*[SnakesAmount];
+	for(int i = 0; i < SnakesAmount; i++){
+		tmp[i] = SNAKES[i];
+	}
+	tmp[SnakesAmount - 1] = new Snake(this, SnakesAmount);
+	delete[] SNAKES;
+	SNAKES = tmp;
+	return SNAKES[SnakesAmount - 1]->getId();
+}
+
+void SnakeGame::removeSnake(int id){
+	while(LOCK) {
+	}
+	LOCK = true;
+	SnakesAmount--;
+	Snake** tmp = new Snake*[SnakesAmount];
+	int o = 0;
+	for(int i = 0; i < SnakesAmount + 1; i++){
+		if(SNAKES[i]->getId() == id){
+			o = 1;
+			continue;
+		}
+		tmp[i - o] = SNAKES[i];
+	}
+	delete[] SNAKES;
+	SNAKES = tmp;
+	LOCK = false;
+}
+
+void SnakeGame::addFruit(){
 	FruitsAmount++;
 	std::pair<int, int>* tmp = new std::pair<int, int>[FruitsAmount];
 	for(int i = 0; i < FruitsAmount - 1; i++){
@@ -20,7 +53,20 @@ void SnakeGame::AddFruit(){
 	FRUITSARR = tmp;
 }
 
-Snake* SnakeGame::getsnakeptr(int id){
+int SnakeGame::tryEat(int x, int y){
+	for(int i = 0; i < FruitsAmount; i++){
+		if(FRUITSARR[i] == std::make_pair(x, y)){
+			for(int i = 0; i < FruitsAmount + 1; i++){
+				if(FRUITSARR[i] == std::make_pair(x, y)){
+					FRUITSARR[i] = {rand() % W, rand() % H};
+				}
+			}
+			return 1;
+		}
+	}
+	return 0;
+}
+Snake* SnakeGame::getSnakePtr(int id){
 	for(int i = 0; i < SnakesAmount; i++){
 		if (SNAKES[i]->getId() == id){
 			return SNAKES[i];
@@ -32,7 +78,6 @@ Snake* SnakeGame::getsnakeptr(int id){
 void SnakeGame::get(int s){
 	int sig = 0;
 	write(s, &sig, sizeof(0));
-
 	read(s, &W, sizeof(W));
 	read(s, &H, sizeof(H));
 	read(s, &SnakesAmount, sizeof(SnakesAmount));
@@ -52,6 +97,10 @@ void SnakeGame::get(int s){
 }
 
 void SnakeGame::send(int s){
+	while(LOCK) {
+
+	}
+	LOCK = true;
 	int tfa = FruitsAmount, tsa = SnakesAmount;
 	write(s, &W, sizeof(W));
 	write(s, &H, sizeof(H));
@@ -64,9 +113,10 @@ void SnakeGame::send(int s){
 		SNAKES[i]->sendStatic(s);
 		SNAKES[i]->sendDynamic(s);
 	}
+	LOCK = false;
 }
 
-void SnakeGame::Draw(sf::RenderWindow* w, int msnakeid){
+void SnakeGame::draw(sf::RenderWindow* w, int msnakeid){
 	w->clear(sf::Color::White);
 	for(int i = 0; i < FruitsAmount; i++){
 		sf::RectangleShape cell;
@@ -77,45 +127,8 @@ void SnakeGame::Draw(sf::RenderWindow* w, int msnakeid){
 	}
 
 	for(int i = 0; i < SnakesAmount; i++)
-		SNAKES[i]->Draw(w, SNAKES[i]->getId()==msnakeid);
+		SNAKES[i]->draw(w, SNAKES[i]->getId()==msnakeid);
 	w->display();
-}
-
-int SnakeGame::tryEat(int x, int y){
-	for(int i = 0; i < FruitsAmount; i++){
-		if(FRUITSARR[i] == std::make_pair(x, y)){
-			FruitsAmount--;
-			std::pair<int, int>* tmp = new std::pair<int, int>[FruitsAmount];
-			int o = 0;
-			for(int i = 0; i < FruitsAmount + 1; i++){
-				if(FRUITSARR[i] == std::make_pair(x, y)){
-					o = 1;
-					continue;
-				}
-				tmp[i - o] = FRUITSARR[i];
-			}
-			delete[] FRUITSARR;
-			FRUITSARR = tmp;
-			AddFruit();
-			return 1;
-		}
-	}
-	return 0;
-}
-
-void SnakeGame::removeSnake(int id){
-	SnakesAmount--;
-	Snake** tmp = new Snake*[SnakesAmount];
-	int o;
-	for(int i = 1; i <= SnakesAmount; i++){
-		if(i == id){
-			o = 1;
-			continue;
-		}
-		tmp[i - o] = SNAKES[i];
-	}
-	delete[] SNAKES;
-	SNAKES = tmp;
 }
 
 int SnakeGame::getIndex(int i){
@@ -130,7 +143,7 @@ void SnakeGame::sendSnakeDir(int sock, int id){
 	int sig = 3;
 	write(sock, &sig, sizeof(3));
 	write(sock, &id, sizeof(id));
-	Directon t;
+	DIRECTION t;
 	t = SNAKES[getIndex(id)]->getDir();
 	write(sock, &t, sizeof(t));
 }
@@ -138,27 +151,19 @@ void SnakeGame::sendSnakeDir(int sock, int id){
 void SnakeGame::getSnakeDir(int sock){
 	int id;
 	read(sock, &id, sizeof(id));
-	Directon t;
-	read(sock, &t, sizeof(Directon));
+	DIRECTION t;
+	read(sock, &t, sizeof(DIRECTION));
 	SNAKES[getIndex(id)]->setDir(t);
 }
 
-int SnakeGame::addSnake(){
-	AddFruit();	
-	Snake** tmp = new Snake*[SnakesAmount];
-	for(int i = 0; i < SnakesAmount; i++){
-		tmp[i] = SNAKES[i];
-	}
-	tmp[SnakesAmount] = new Snake(this, SnakesAmount + 1);
-	delete[] SNAKES;
-	SNAKES = tmp;
-	SnakesAmount++;
-	return SNAKES[SnakesAmount - 1]->getId();
-}
 
-void SnakeGame::Step(){
+void SnakeGame::step(){
+	while(LOCK) {
+	}
+	LOCK = true;
 	for(int i = 0; i < SnakesAmount; i++)
-		SNAKES[i]->Update();
+		SNAKES[i]->update();
+	LOCK = false;
 }
 
 std::pair<int, int> SnakeGame::getSize(){
@@ -195,12 +200,12 @@ void Snake::sendDynamic(int s){
 
 Snake::Snake(SnakeGame* ses_ptr, int id){
 	LEN = 0;
-	session = ses_ptr;
-	POS = {rand() % session->getSize().first, rand() % session->getSize().second};
+	SESSION = ses_ptr;
+	POS = {rand() % SESSION->getSize().first, rand() % SESSION->getSize().second};
 	LPOS=POS;
 	PARTS = new std::pair<int,int>[1];
 	ID = id;
-	AddPart();
+	addPart();
 }
 
 int Snake::getId(){
@@ -224,17 +229,17 @@ void Snake::handleEvents(sf::Event e){
 	}
 }
 
-void Snake::setDir(Directon d){
+void Snake::setDir(DIRECTION d){
 	DIR = d;
 }
 
-Directon Snake::getDir(){
+DIRECTION Snake::getDir(){
 	return DIR;
 }
 
-void Snake::Update(){
-	if(session->tryEat(POS.first, POS.second)){
-		AddPart();
+void Snake::update(){
+	if(SESSION->tryEat(POS.first, POS.second)){
+		addPart();
 	}
 	LPOS = POS;
 	switch (DIR)
@@ -257,8 +262,8 @@ void Snake::Update(){
 	auto div = [] (int a, int b) {
         return (b + (a%b)) % b;
     };
-	POS.first=div(POS.first, session->getSize().first);
-	POS.second=div(POS.second, session->getSize().second);
+	POS.first=div(POS.first, SESSION->getSize().first);
+	POS.second=div(POS.second, SESSION->getSize().second);
 	if (LEN > 0){
 		std::pair<int,int> prev2;
 		for (int i = 0; i < LEN; i++)
@@ -270,7 +275,7 @@ void Snake::Update(){
 	}
 }
 
-void Snake::Draw(sf::RenderWindow* w, bool active){
+void Snake::draw(sf::RenderWindow* w, bool active){
 	sf::RectangleShape cell;
 	for (int i = LEN - 1; i >= 0; i--){
 		cell.setSize(sf::Vector2f(20, 20));
@@ -286,7 +291,7 @@ void Snake::Draw(sf::RenderWindow* w, bool active){
 	}
 }
 
-void Snake::AddPart(){
+void Snake::addPart(){
 	LEN++;
 	std::pair<int,int>* tmp = new std::pair<int,int>[LEN];
 	for(int i = 0; i < LEN - 1; i++){
