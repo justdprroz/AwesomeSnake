@@ -117,6 +117,10 @@ void SnakeGame::send(int s){
 }
 
 void SnakeGame::draw(sf::RenderWindow* w, int msnakeid){
+	while (LOCK){
+
+	}
+	LOCK = true;
 	w->clear(sf::Color::White);
 	for(int i = 0; i < FruitsAmount; i++){
 		sf::RectangleShape cell;
@@ -129,6 +133,7 @@ void SnakeGame::draw(sf::RenderWindow* w, int msnakeid){
 	for(int i = 0; i < SnakesAmount; i++)
 		SNAKES[i]->draw(w, SNAKES[i]->getId()==msnakeid);
 	w->display();
+	LOCK = false;
 }
 
 int SnakeGame::getIndex(int i){

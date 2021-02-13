@@ -2,9 +2,30 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <iostream>
+
+#include <thread>
+
+#include <chrono>
 #include "snake.hpp"
 // #define IP "192.168.1.50"
 // #define PORT 51090
+SnakeGame game;
+int id;
+
+void commsock(int sock){
+	while(true) {
+		game.sendSnakeDir(sock, id);
+		game.get(sock);
+	}
+}
+
+int logic(){
+	while (true)
+	{
+		game.step();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+	}
+}
 
 int main(int argc, char const *argv[]) 
 { 
@@ -16,15 +37,15 @@ int main(int argc, char const *argv[])
 	inet_pton(AF_INET, argv[1], &serv_addr.sin_addr);
 	connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 	write(sock, new int(100), sizeof(100));
-	int id;
 	read(sock, &id, sizeof(id));
 	int Width = 1000, Height = 1000;
     sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
 	sf::View view;
 	view.setSize(sf::Vector2f(Width, Height));
-	SnakeGame game;
 	game.get(sock);
 	window.setView(view);
+	std::thread(commsock, sock).detach();
+	// std::thread(logic).detach();
 	while (window.isOpen())
     {	
 		Snake* s = game.getSnakePtr(id);
@@ -35,7 +56,7 @@ int main(int argc, char const *argv[])
             if (event.type == sf::Event::Closed){
 				int s = -100;
 				write(sock, &s, sizeof(s));
-				write(sock, &id, sizeof(id - 1));	
+				write(sock, &id, sizeof(id));
                 window.close();
 				return 0;
 			}
@@ -44,9 +65,7 @@ int main(int argc, char const *argv[])
 				window.setView(sf::View(visibleArea));
 			}
         }
-		game.sendSnakeDir(sock, s->getId());
-		game.get(sock);
-		game.draw(&window, s->getId());
+		game.draw(&window, id);
     }
 	return 0;
 } 
