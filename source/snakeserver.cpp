@@ -17,9 +17,13 @@ SnakeGame game;
 void commsock(int arg){
     int newSocket = arg;
     int sig = 0;
+    int ret;
     while (true)
     {
-        read(newSocket, &sig, sizeof(sig));
+        ret = read(newSocket, &sig, sizeof(sig));
+        if( (ret == -1 || ret != sizeof(sig))) {
+		    std::cout << "Error readind signal\n";
+	    }
         if(sig == 0){
             game.send(newSocket);
         }

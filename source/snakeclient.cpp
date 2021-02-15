@@ -27,7 +27,11 @@ int main(int argc, char const *argv[])
 	connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
 	write(sock, &signal, sizeof(signal));
 	int id;
-	read(sock, &id, sizeof(id));
+	int ret;
+	ret = read(sock, &id, sizeof(id));
+	if( (ret == -1 || ret != sizeof(id))) {
+		std::cout << "Error readind id\n";
+	}
 	int Width = 1000, Height = 1000;
     sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
 	sf::View view;

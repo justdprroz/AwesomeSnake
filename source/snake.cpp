@@ -78,14 +78,30 @@ Snake* SnakeGame::getSnakePtr(int id){
 void SnakeGame::get(int s){
 	int sig = 0;
 	write(s, &sig, sizeof(sig));
-	read(s, &W, sizeof(W));
-	read(s, &H, sizeof(H));
-	read(s, &SnakesAmount, sizeof(SnakesAmount));
-	read(s, &FruitsAmount, sizeof(FruitsAmount));
+	int ret;
+	ret = read(s, &W, sizeof(W));
+	if( (ret == -1 || ret != sizeof(W))) {
+		std::cout << "Error readind SnakeGame.W\n";
+	}
+	ret = read(s, &H, sizeof(H));
+	if( (ret == -1 || ret != sizeof(H))) {
+		std::cout << "Error readind SnakeGame.H\n";
+	}
+	ret = read(s, &SnakesAmount, sizeof(SnakesAmount));
+	if( (ret == -1 || ret != sizeof(SnakesAmount))) {
+		std::cout << "Error readind SnakeGame.SnakesAmount\n";
+	}
+	ret = read(s, &FruitsAmount, sizeof(FruitsAmount));
+	if( (ret == -1 || ret != sizeof(FruitsAmount))) {
+		std::cout << "Error readind SnakeGame.FruitsAmount\n";
+	}
 	delete[] FRUITSARR;
 	FRUITSARR = new std::pair<int, int>[FruitsAmount];
 	for(int i = 0; i < FruitsAmount; i++){
-		read(s, &FRUITSARR[i], sizeof(FRUITSARR[i]));
+		ret = read(s, &FRUITSARR[i], sizeof(FRUITSARR[i]));
+		if( (ret == -1 || ret != sizeof(FRUITSARR[i]))) {
+			std::cout << "Error readind SnakeGame.FRUITSARR[" << i << "]\n";
+		}
 	}
 	delete[] SNAKES;
 	SNAKES = new Snake*[SnakesAmount];
@@ -150,12 +166,18 @@ void SnakeGame::sendSnakeDir(int sock, int id){
 
 void SnakeGame::getSnakeDir(int sock){
 	int id;
-	read(sock, &id, sizeof(id));
+	int ret;
+	ret = read(sock, &id, sizeof(id));
+	if( (ret == -1 || ret != sizeof(id))) {
+		std::cout << "Error readind id\n";
+	}
 	DIRECTION t;
-	read(sock, &t, sizeof(DIRECTION));
+	ret = read(sock, &t, sizeof(DIRECTION));
+	if( (ret == -1 || ret != sizeof(DIRECTION))) {
+		std::cout << "Error readind Dir of snake " << id << '\n';
+	}
 	SNAKES[getIndex(id)]->setDir(t);
 }
-
 
 void SnakeGame::step(){
 	while(LOCK) {
@@ -171,17 +193,34 @@ std::pair<int, int> SnakeGame::getSize(){
 }
 
 void Snake::getStatic(int s){
-	read(s, &DIR, sizeof(DIR));
-	read(s, &ID, sizeof(ID));
-	read(s, &POS, sizeof(POS));
-	read(s, &LEN, sizeof(LEN));
+	int ret;
+	ret = read(s, &DIR, sizeof(DIR));
+	if( (ret == -1 || ret != sizeof(DIR))) {
+		std::cout << "Error readind DIR\n";
+	}
+	ret = read(s, &ID, sizeof(ID));
+	if( (ret == -1 || ret != sizeof(ID))) {
+		std::cout << "Error readind ID\n";
+	}
+	ret = read(s, &POS, sizeof(POS));
+	if( (ret == -1 || ret != sizeof(POS))) {
+		std::cout << "Error readind POS\n";
+	}
+	ret = read(s, &LEN, sizeof(LEN));
+	if( (ret == -1 || ret != sizeof(LEN))) {
+		std::cout << "Error readind LEN\n";
+	}
 }
 
 void Snake::getDynamic(int s){
+	int ret;
 	delete[] PARTS;
 	PARTS = new std::pair<int, int>[LEN];
 	for(int i = 0; i < LEN; i++){
-		read(s, &PARTS[i], sizeof(PARTS[i]));
+		ret = read(s, &PARTS[i], sizeof(PARTS[i]));
+		if( (ret == -1 || ret != sizeof(PARTS[i]))) {
+			std::cout << "Error readind PART " << i << '\n';
+		}
 	}
 }
 
