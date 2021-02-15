@@ -19,7 +19,7 @@ On Widnows:
 ## Build & Run
 ### To build
 Run ```build.sh``` script without arguments to compile **Release** build or with *Debug/debug/D/d* to compile **Debug** build
-```
+```bash
 sh build.sh
 sh build.sh Debug/debug/D/d
 ```
@@ -32,7 +32,7 @@ Command
 ```./build/snakeserver <ip> <port>```
 
 Example 
-```
+```bash
 ./build/snakeserver 127.0.0.1 36876
 ```
 **For client**  
@@ -40,6 +40,6 @@ Command
 ```./build/snakeclient <ip> <port>```
 
 Example  
-```
+```bash
 ./build/snakeclient 127.0.0.1 36876
 ```
