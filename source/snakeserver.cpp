@@ -8,7 +8,7 @@
 // #define IP "192.168.1.50"
 // #define PORT 51090
 
-int serverSocket, newSocket;
+int serverSocket, newSocket, opt = 1;
 sockaddr_in address;
 sockaddr_storage serverStorage;
 socklen_t addr_size;
@@ -51,6 +51,7 @@ int main(int argc, char const *argv[])
 {   
     srand(time(NULL));
 	serverSocket = socket(PF_INET, SOCK_STREAM, 0);
+    setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
 	address.sin_family = AF_INET; 
 	address.sin_port = htons(atoi(argv[2]));
 	address.sin_addr.s_addr = inet_addr(argv[1]);
@@ -59,7 +60,6 @@ int main(int argc, char const *argv[])
     listen(serverSocket, 50);
 
     std::thread log(logic);
-    
     while(1) {
         addr_size = sizeof(serverStorage);
         newSocket = accept(serverSocket, (struct sockaddr *)&serverStorage, (socklen_t*)&addr_size);

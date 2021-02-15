@@ -17,8 +17,7 @@ int main(int argc, char const *argv[])
 	if (argc > 2){
 		port = std::stoi(argv[2]);
 	}
-	int sock = 0; 
-	int opt = 1;
+	int sock = 0;
 	int signal = 100;
 	struct sockaddr_in serv_addr;  
 	sock = socket(AF_INET, SOCK_STREAM, 0);
