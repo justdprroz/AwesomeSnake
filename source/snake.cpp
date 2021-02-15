@@ -213,10 +213,10 @@ void Snake::getStatic(int s){
 }
 
 void Snake::getDynamic(int s){
-	int ret;
 	delete[] PARTS;
 	PARTS = new std::pair<int, int>[LEN];
 	for(int i = 0; i < LEN; i++){
+		int ret;
 		ret = read(s, &PARTS[i], sizeof(PARTS[i]));
 		if( (ret == -1 || ret != sizeof(PARTS[i]))) {
 			std::cout << "Error readind PART " << i << '\n';
