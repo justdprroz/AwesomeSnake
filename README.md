@@ -14,7 +14,7 @@ On Ubuntu Linux:
 ```apt-get install libsfml-dev``` :question:
 
 On Widnows:  
-:exclamation::exclamation: **I am so sorry but Windows is unsuppoted** :exclamation::exclamation:
+:exclamation::exclamation: **I am so sorry but Windows is unsupported** :exclamation::exclamation:
 
 # Build & Run
 ## To build
