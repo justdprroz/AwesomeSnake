@@ -1,7 +1,7 @@
 # AwesomeSnake
 My online snake game project
 
-# Requirements
+## Requirements
 
 ### **You must have [SFML library](https://www.sfml-dev.org/) installed**
 
@@ -16,27 +16,27 @@ On Ubuntu Linux:
 On Widnows:  
 :exclamation::exclamation: **I am so sorry but Windows is unsupported** :exclamation::exclamation:
 
-# Build & Run
-## To build
+## Build & Run
+### To build
 Run ```build.sh``` script without arguments to compile **Release** build or with *Debug/debug/D/d* to compile **Debug** build
-```
+```bash
 sh build.sh
 sh build.sh Debug/debug/D/d
 ```
 
-## To run
+### To run
 **You should firstly run server**
 #### For server
 ```./build/snakeserver <ip> <port>```
 
 Example 
-```
+```bash
 ./build/snakeserver 127.0.0.1 36876
 ```
 #### For client
 ```./build/snakeclient <ip> <port>```
 
 Example  
-```
+```bash
 ./build/snakeclient 127.0.0.1 36876
 ```
