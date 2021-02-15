@@ -1,4 +1,7 @@
 # AwesomeSnake
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9aba85ea869247dc9539af22fa740b43)](https://app.codacy.com/gh/mysterious-games/AwesomeSnake?utm_source=github.com&utm_medium=referral&utm_content=mysterious-games/AwesomeSnake&utm_campaign=Badge_Grade)
+
 My online snake game project
 
 ## Requirements
