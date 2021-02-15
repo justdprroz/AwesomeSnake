@@ -1,3 +1,4 @@
+#!/bin/bash
 [ ! -d build ] && mkdir build
 [ ! -d tmp ] && mkdir tmp
 cd tmp

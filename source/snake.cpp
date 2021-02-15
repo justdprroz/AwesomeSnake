@@ -77,7 +77,7 @@ Snake* SnakeGame::getSnakePtr(int id){
 
 void SnakeGame::get(int s){
 	int sig = 0;
-	write(s, &sig, sizeof(0));
+	write(s, &sig, sizeof(sig));
 	read(s, &W, sizeof(W));
 	read(s, &H, sizeof(H));
 	read(s, &SnakesAmount, sizeof(SnakesAmount));
@@ -141,7 +141,7 @@ int SnakeGame::getIndex(int i){
 
 void SnakeGame::sendSnakeDir(int sock, int id){
 	int sig = 3;
-	write(sock, &sig, sizeof(3));
+	write(sock, &sig, sizeof(sig));
 	write(sock, &id, sizeof(id));
 	DIRECTION t;
 	t = SNAKES[getIndex(id)]->getDir();
