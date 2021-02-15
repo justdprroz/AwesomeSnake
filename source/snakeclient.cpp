@@ -2,22 +2,36 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <iostream>
+#include <string>
 #include "snake.hpp"
 // #define IP "192.168.1.50"
 // #define PORT 51090
 
 int main(int argc, char const *argv[]) 
-{ 
-	int sock = 0; 
+{
+	int port = 22222;
+	const char* ip = "127.0.0.1";
+	if (argc > 1) {
+		ip = argv[1];
+	}
+	if (argc > 2){
+		port = std::stoi(argv[2]);
+	}
+	int sock = 0;
+	int signal = 100;
 	struct sockaddr_in serv_addr;  
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_port = htons(atoi(argv[2]));
-	inet_pton(AF_INET, argv[1], &serv_addr.sin_addr);
+	serv_addr.sin_port = htons(port);
+	inet_pton(AF_INET, ip, &serv_addr.sin_addr);
 	connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr));
-	write(sock, new int(100), sizeof(100));
+	write(sock, &signal, sizeof(signal));
 	int id;
-	read(sock, &id, sizeof(id));
+	int ret;
+	ret = read(sock, &id, sizeof(id));
+	if( (ret == -1 || ret != sizeof(id))) {
+		std::cout << "Error readind id\n";
+	}
 	int Width = 1000, Height = 1000;
     sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
 	sf::View view;
@@ -35,7 +49,7 @@ int main(int argc, char const *argv[])
             if (event.type == sf::Event::Closed){
 				int s = -100;
 				write(sock, &s, sizeof(s));
-				write(sock, &id, sizeof(id - 1));	
+				write(sock, &id, sizeof(id));	
                 window.close();
 				return 0;
 			}
