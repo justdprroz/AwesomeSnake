@@ -6,7 +6,7 @@
 #include <iostream>
 
 // Direction enumeration for snake rotation
-enum DIRECTION { S = 0, L, R, U, D};
+enum DIRECTION { S = 0, L, R, U, D, K};
 
 // Defining classes
 class SnakeGame;
