@@ -1,8 +1,5 @@
-#include <unistd.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <iostream>
-#include "snake.hpp"
+// #include "snake/snake.hpp"
+#include "snake/snakeclient.hpp"
 
 int main(int argc, char const *argv[]) 
 {
@@ -25,22 +22,26 @@ int main(int argc, char const *argv[])
 	int id;
 	int ret;
 	read(sock, &id, sizeof(id));
+	std::cout << id << '\n';
 	int Width = 1000, Height = 1000;
     sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
 	sf::View view;
 	view.setSize(sf::Vector2f(Width, Height));
-	SnakeGame game;
+	SnakeGameClient game(50, 50, 10, 10);
 	game.get(sock);
 	window.setView(view);
 	while (window.isOpen())
     {	
-		Snake* s = game.getSnakePtr(id);
-        sf::Event event;
+		int sig;
+		sf::Event event;
         while (window.pollEvent(event))
         {	
-			s->handleEvents(event);
+			game.handleEvents(event, id);
             if (event.type == sf::Event::Closed){
                 window.close();
+				sig = 100;
+				write(sock, &sig, sizeof(sig));
+				write(sock, &id, sizeof(id));
 				return 0;
 			}
 			if (event.type == sf::Event::Resized) {
@@ -48,9 +49,13 @@ int main(int argc, char const *argv[])
 				window.setView(sf::View(visibleArea));
 			}
         }
-		game.sendSnakeDir(sock, s->getId());
+		window.clear();
+		sig = 0;
+		write(sock, &sig, sizeof(sig));
+		game.sendSnakeDir(sock, id);
 		game.get(sock);
-		game.draw(&window, s->getId());
+		game.draw(&window, id);
+		window.display();
     }
 	return 0;
 } 

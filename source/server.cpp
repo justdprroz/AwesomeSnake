@@ -1,28 +1,32 @@
-#include <unistd.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h>
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include "snake.hpp"
-#include <mutex>
+// #include "snake/snake.hpp"
+#include "snake/snakeserver.hpp"
 
 int serverSocket, newSocket, opt = 1;
 sockaddr_in address;
 sockaddr_storage serverStorage;
 socklen_t addr_size;
-SnakeGame game;
+SnakeGameServer game(50,50,10,10);
 bool l = false;
 std::mutex serverMutex;
 
 void commsock(int arg){
     int newSocket = arg;
     int id = game.addSnake();
+    std::cout << id << '\n';
     write(newSocket, &id, sizeof(id));
     game.send(newSocket);
     while (true){
+        int sig;
+        read(newSocket, &sig, sizeof(sig));
+        if(sig == 100){
+            int id;
+            read(newSocket, &id, sizeof(id));
+            game.removeSnake(id);
+            close(newSocket);
+            break;
+        }
         serverMutex.lock();
-        game.getSnakeDir(newSocket);
+        game.getSnakeDirection(newSocket, id);
         game.send(newSocket);
         serverMutex.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));

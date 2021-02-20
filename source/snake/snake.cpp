@@ -1,4 +1,4 @@
-#include "snake.hpp"
+#include "snake/snake.hpp"
 
 SnakeGame::SnakeGame(){
 	W = 50;
