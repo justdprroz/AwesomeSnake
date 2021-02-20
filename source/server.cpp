@@ -1,53 +1,43 @@
-#include <unistd.h> 
-#include <sys/socket.h> 
-#include <arpa/inet.h>
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include "snake.hpp"
-// #define IP "192.168.1.50"
-// #define PORT 51090
+// #include "snake/snake.hpp"
+#include "snake/snakeserver.hpp"
 
 int serverSocket, newSocket, opt = 1;
 sockaddr_in address;
 sockaddr_storage serverStorage;
 socklen_t addr_size;
-SnakeGame game;
+SnakeGameServer game(50,50,10,10);
+bool l = false;
+std::mutex serverMutex;
 
 void commsock(int arg){
     int newSocket = arg;
-    int sig = 0;
-    while (true)
-    {
-        int ret;
-        ret = read(newSocket, &sig, sizeof(sig));
-        if( (ret == -1 || ret != sizeof(sig))) {
-		    std::cout << "Error readind signal\n";
-	    }
-        if(sig == 0){
-            game.send(newSocket);
-        }
-        if(sig == 3){
-            game.getSnakeDir(newSocket);
-        }
+    int id = game.addSnake();
+    std::cout << id << '\n';
+    write(newSocket, &id, sizeof(id));
+    game.send(newSocket);
+    while (true){
+        int sig;
+        read(newSocket, &sig, sizeof(sig));
         if(sig == 100){
-            int id = game.addSnake();
-            write(newSocket, &id, sizeof(id));
-        }
-        if(sig == -100){
             int id;
             read(newSocket, &id, sizeof(id));
             game.removeSnake(id);
             close(newSocket);
-            return;
+            break;
         }
-        sig = -1000;
+        serverMutex.lock();
+        game.getSnakeDirection(newSocket, id);
+        game.send(newSocket);
+        serverMutex.unlock();
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
 void logic(){
     while(true){
+        serverMutex.lock();
         game.step();
+        serverMutex.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
