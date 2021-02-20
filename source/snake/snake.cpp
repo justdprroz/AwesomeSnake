@@ -1,4 +1,4 @@
-#include "snake.hpp"
+#include "snake/snake.hpp"
 
 SnakeGame::SnakeGame(){
 	W = 50;
@@ -24,9 +24,6 @@ int SnakeGame::addSnake(){
 }
 
 void SnakeGame::removeSnake(int id){
-	while(LOCK) {
-	}
-	LOCK = true;
 	SnakesAmount--;
 	Snake** tmp = new Snake*[SnakesAmount];
 	int o = 0;
@@ -39,7 +36,6 @@ void SnakeGame::removeSnake(int id){
 	}
 	delete[] SNAKES;
 	SNAKES = tmp;
-	LOCK = false;
 }
 
 void SnakeGame::addFruit(){
@@ -76,8 +72,6 @@ Snake* SnakeGame::getSnakePtr(int id){
 }
 
 void SnakeGame::get(int s){
-	int sig = 0;
-	write(s, &sig, sizeof(sig));
 	int ret;
 	ret = read(s, &W, sizeof(W));
 	if( (ret == -1 || ret != sizeof(W))) {
@@ -113,10 +107,6 @@ void SnakeGame::get(int s){
 }
 
 void SnakeGame::send(int s){
-	while(LOCK) {
-
-	}
-	LOCK = true;
 	int tfa = FruitsAmount, tsa = SnakesAmount;
 	write(s, &W, sizeof(W));
 	write(s, &H, sizeof(H));
@@ -129,7 +119,6 @@ void SnakeGame::send(int s){
 		SNAKES[i]->sendStatic(s);
 		SNAKES[i]->sendDynamic(s);
 	}
-	LOCK = false;
 }
 
 void SnakeGame::draw(sf::RenderWindow* w, int msnakeid){
@@ -156,8 +145,6 @@ int SnakeGame::getIndex(int i){
 }
 
 void SnakeGame::sendSnakeDir(int sock, int id){
-	int sig = 3;
-	write(sock, &sig, sizeof(sig));
 	write(sock, &id, sizeof(id));
 	DIRECTION t;
 	t = SNAKES[getIndex(id)]->getDir();
@@ -180,12 +167,8 @@ void SnakeGame::getSnakeDir(int sock){
 }
 
 void SnakeGame::step(){
-	while(LOCK) {
-	}
-	LOCK = true;
 	for(int i = 0; i < SnakesAmount; i++)
 		SNAKES[i]->update();
-	LOCK = false;
 }
 
 std::pair<int, int> SnakeGame::getSize(){
