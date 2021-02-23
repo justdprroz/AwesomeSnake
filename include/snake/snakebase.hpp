@@ -9,7 +9,7 @@
 #include <chrono> // timeformats
 #include <mutex> // mutex
 #include <iostream> // ...
-
+#include <math.h> // ..
 
 enum direction { STOP, LEFT, RIGHT, UP, DOWN};
 
@@ -20,18 +20,34 @@ T getRandomReal(T a, T b)
     std::mt19937 randomGenerator(randomDevice());
     std::uniform_real_distribution<T> distrib(a, b);
     return distrib(randomGenerator);
-} 
+}
+
+struct SnakePart {
+    SnakePart() = default;
+    SnakePart(std::pair<float, float> h, std::pair<float, float> b);
+    SnakePart(std::pair<float, float> p);
+    std::pair<float, float> head;
+    std::pair<float, float> back;
+};
+
+// struct SnakePart {
+//     SnakePart();
+//     SnakePart(std::pair<float, float> l, std::pair<float, float> r, std::pair<float, float> v);
+//     std::pair<float, float> lu;
+//     std::pair<float, float> rd;
+//     std::pair<float, float> ve;
+// };
+
 
 struct Snake{
     Snake();
-    Snake(int16_t i, int16_t w, int16_t h);
     Snake(int16_t i, float x, float y);
     bool alive;
     direction dir;
     int16_t id, lenght;
     float step;
     std::pair<float, float> pos, lpos;
-    std::pair<float, float>* parts;
+    SnakePart* parts;
 };
 
 class SnakeGameBase {

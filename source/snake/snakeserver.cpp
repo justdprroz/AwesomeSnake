@@ -3,7 +3,7 @@
 int16_t SnakeGameServer::addSnake(){
     if (snakesAmount == maxSnakesAmount) return -1;
 	snakesAmount++;
-	snakes[snakesAmount - 1] = new Snake(snakesAmount, width, height);
+	snakes[snakesAmount - 1] = new Snake(snakesAmount, 20, 20);
 	return getSnakeId(snakes[snakesAmount - 1]);
 }
 
@@ -34,41 +34,67 @@ void SnakeGameServer::step(){
 				break;
 			}
 		}
+
+		std::pair<float, float> lvec = {s->pos.first - s->lpos.first, s->pos.second - s->lpos.second};
+
 		s->lpos = s->pos;
 		switch (s->dir) {
 			case LEFT:
-				s->pos.first-=s->step;
+				if (s->dir != RIGHT)
+					s->pos.first-=s->step;
 				break;
 			case RIGHT:
-				s->pos.first+=s->step;
+				if (s->dir != LEFT)
+					s->pos.first+=s->step;
 				break;
 			case UP:
-				s->pos.second-=s->step;
+				if (s->dir != DOWN)
+					s->pos.second-=s->step;
 				break;
 			case DOWN:
-				s->pos.second+=s->step;
+				if (s->dir != UP)
+					s->pos.second+=s->step;
 				break;
 			default:
 				break;
 		}
-		auto transfer = [] (float a, int16_t b) {
-			if (a >= b){
-				a -= b;
+		std::cout << s->pos.first << ' ' << s->pos.second << '\n';
+
+		std::pair<float, float> vec = {s->pos.first - s->lpos.first, s->pos.second - s->lpos.second};
+
+		if (vec.first != lvec.first && vec.second != lvec.second){
+			// TODO: change direction
+			SnakePart* tmp = new SnakePart[s->lenght + 1];
+			for(int i = 0; i <= s->lenght; i++){
+				tmp[i] = s->parts[i];
 			}
-			if (a < 0){
-				a += b;
-			}
-        	return a;
-    	};
-		s->pos.first=transfer(s->pos.first, width);
-		s->pos.second=transfer(s->pos.second, height);
-		std::pair<float,float> prev2;
-		for (int i = 0; i < s->lenght; i++)
-		{
-			prev2 = s->parts[i];
-			s->parts[i] = s->lpos;
-			s->lpos = prev2;
+			tmp[s->lenght] = SnakePart{{s->pos.first, s->pos.second}};
+			delete[] s->parts;
+			s->parts = tmp;
+			s->lenght++;
+			std::cout << s->lenght << '\n';
 		}
+		
+		auto* head = &s->parts[s->lenght - 1];
+		head->head.first += vec.first;
+		head->head.second += vec.second;
+
+
+		int toDelete = 0;
+
+		float path = std::sqrt(vec.first * vec.first + vec.second * vec.second);
+		auto* back = &s->parts[toDelete];
+		float backLenght = std::sqrt(std::pow(back->head.first - back->back.first, 2) + std::pow(back->head.second - back->back.second, 2));
+
+		while(path >= backLenght){
+			path -= backLenght;
+			toDelete++;
+			back = &s->parts[toDelete];
+			backLenght = std::sqrt(std::pow(back->head.first - back->back.first, 2) + std::pow(back->head.second - back->back.second, 2));
+		}
+		float ratio = path / backLenght;
+		back->back.first += (back->head.first - back->back.first) * ratio;
+		back->back.second += (back->head.second - back->back.second) * ratio;
     }
 }
 
@@ -87,7 +113,9 @@ void SnakeGameServer::send(int socket){
 		write(socket, &s->pos, sizeof(s->pos));
 		write(socket, &s->lenght, sizeof(s->lenght));
 		for(int i = 0; i < s->lenght; i++) {
-			write(socket, &s->parts[i], sizeof(s->parts[i]));
+			// write(socket, &s->parts[i], sizeof(s->parts[i]));
+			write(socket, &s->parts[i].head, sizeof(s->parts[i].head));
+			write(socket, &s->parts[i].back, sizeof(s->parts[i].back));
 		}	
 	}
 }
@@ -109,12 +137,17 @@ void SnakeGameServer::addPart(int16_t id){
 }
 
 void SnakeGameServer::addPart(Snake* s){
-	s->lenght++;
-	std::pair<float,float>* tmp = new std::pair<float,float>[s->lenght];
-	for(int i = 0; i < s->lenght - 1; i++){
-		tmp[i] = s->parts[i];
-	}
-	tmp[s->lenght - 1] = {s->lpos.first, s->lpos.second};
-	delete[] s->parts;
-	s->parts = tmp;
+	// s->lenght++;
+	// std::pair<float,float>* tmp = new std::pair<float,float>[s->lenght];
+	// for(int i = 0; i < s->lenght - 1; i++){
+	// 	tmp[i] = s->parts[i];
+	// }
+	// tmp[s->lenght - 1] = {s->lpos.first, s->lpos.second};
+	// delete[] s->parts;
+	// s->parts = tmp;
+	auto* back = &s->parts[0];
+	float backLenght = std::sqrt(std::pow(back->head.first - back->back.first, 2) + std::pow(back->head.second - back->back.second, 2));
+	float ratio = -1 / backLenght;
+	back->back.first += (back->head.first - back->back.first) * ratio;
+	back->back.second += (back->head.second - back->back.second) * ratio;
 }

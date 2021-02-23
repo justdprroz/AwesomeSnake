@@ -1,28 +1,31 @@
 #include "snake/snakebase.hpp"
 
-Snake::Snake(int16_t i, int16_t w, int16_t h){
-    id = i;
-    pos = {getRandomReal<float>(0, w), getRandomReal<float>(0, h)};
-    alive = true;
-    dir = STOP;
-    lenght = 1;
-    step = 1.1;
-    lpos = pos;
-    parts = new std::pair<float, float>[1];
-    parts[0] = {lpos.first, lpos.second};
+SnakePart::SnakePart(std::pair<float, float> h, std::pair<float, float> b){
+    head = h;
+    back = b;
 }
+
+SnakePart::SnakePart(std::pair<float, float> p){
+    head = p;
+    back = p;
+}
+
+// SnakePart::SnakePart(std::pair<float, float> l, std::pair<float, float> r, std::pair<float, float> v) {
+//     lu = l;
+//     rd = r;
+//     ve = v;
+// }
 
 Snake::Snake(int16_t i, float x, float y){
     id = i;
     pos = {x, y};
-    parts = new std::pair<float, float>(pos.first, pos.second);
     alive = true;
     dir = STOP;
     lenght = 1;
-    step = 1.1;
+    step = 1;
     lpos = pos;
-    parts = new std::pair<float, float>[1];
-    parts[0] = {lpos.first, lpos.second};
+    parts = new SnakePart[1];
+    parts[0] = SnakePart({x, y}, {x + 1, y + 1});
 }
 
 SnakeGameBase::SnakeGameBase(int16_t msa, int16_t fa){
