@@ -1,7 +1,6 @@
 #include "snake/snakeclient.hpp"
 
 void SnakeGameClient::draw(sf::RenderWindow* w, int as){
-    std::cout << as << '\n';
 	for(int i = 0; i < fruitsAmount; i++){
 		sf::RectangleShape cell;
 		cell.setSize(sf::Vector2f(20, 20));
@@ -14,7 +13,7 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
         sf::RectangleShape cell;
         for (int i = s->lenght - 1; i >= 0; i--){
             cell.setSize(sf::Vector2f(20, 20));
-            int R = i * (255 / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
+            int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
                 cell.setFillColor(sf::Color(R, G, B, 255));
             } else {
@@ -52,7 +51,7 @@ void SnakeGameClient::get(int socket){
 		}
 	}
 	for(int i = 0; i < snakesAmount; i++){
-        snakes[i] = new Snake(i, (uint16_t)50, (uint16_t)50);
+        snakes[i] = new Snake(i, (int16_t)50, (int16_t)50);
         Snake* s = snakes[i];
         int ret;
         ret = read(socket, &s->dir, sizeof(s->dir));
@@ -72,7 +71,7 @@ void SnakeGameClient::get(int socket){
             std::cout << "Error readind LEN\n";
         }
         delete s->parts;
-	    s->parts = new std::pair<double, double>[s->lenght];
+	    s->parts = new std::pair<float, float>[s->lenght];
 	    for(int i = 0; i < s->lenght; i++){
             int ret;
             ret = read(socket, &s->parts[i], sizeof(s->parts[i]));
@@ -89,7 +88,7 @@ void SnakeGameClient::sendSnakeDir(int socket, int id){
     write(socket, &tmp, sizeof(tmp));
 }
 
-void SnakeGameClient::handleEvents(sf::Event e, uint16_t id){
+void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
     Snake* s = snakes[getSnakeIndexById(id)];
     if(e.type == sf::Event::KeyPressed){
 		if (e.key.code == sf::Keyboard::W){

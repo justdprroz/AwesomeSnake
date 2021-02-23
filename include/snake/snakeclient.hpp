@@ -7,5 +7,5 @@ public:
     void draw(sf::RenderWindow* w, int as);
     void get(int socket);
     void sendSnakeDir(int socket, int id);
-    void handleEvents(sf::Event e, uint16_t id);
+    void handleEvents(sf::Event e, int16_t id);
 };

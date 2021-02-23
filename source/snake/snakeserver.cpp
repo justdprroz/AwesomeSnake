@@ -1,14 +1,13 @@
 #include "snake/snakeserver.hpp"
 
-uint16_t SnakeGameServer::addSnake(){
+int16_t SnakeGameServer::addSnake(){
     if (snakesAmount == maxSnakesAmount) return -1;
 	snakesAmount++;
 	snakes[snakesAmount - 1] = new Snake(snakesAmount, width, height);
-	std::cout << snakes[snakesAmount - 1]->id << '\n';
 	return getSnakeId(snakes[snakesAmount - 1]);
 }
 
-void SnakeGameServer::removeSnake(uint16_t id){
+void SnakeGameServer::removeSnake(int16_t id){
 	if(snakesAmount == 0) return;
 	snakesAmount--;
 	int o = 0;
@@ -24,12 +23,13 @@ void SnakeGameServer::step(){
     for(int i = 0; i < snakesAmount; i++){
 		Snake* s = snakes[i];
 		for(int i = 0; i <= fruitsAmount; i++){
-			double dx, dy;
+			float dx, dy;
 			dx = s->pos.first - fruits[i].first;
 			dy = s->pos.second - fruits[i].second;
-			if( -1 <= dx && dx <= 1 && -1 <= dy && dy <= 1){
-				fruits[i].first = getRandom<double>(0, width);
-				fruits[i].second = getRandom<double>(0, height);
+			int range = 2;
+			if( -range <= dx && dx <= range && -range <= dy && dy <= range){
+				fruits[i].first = getRandomReal<float>(0, width - 1);
+				fruits[i].second = getRandomReal<float>(0, height - 1);
 				addPart(s);
 				break;
 			}
@@ -51,7 +51,7 @@ void SnakeGameServer::step(){
 			default:
 				break;
 		}
-		auto transfer = [] (double a, uint16_t b) {
+		auto transfer = [] (float a, int16_t b) {
 			if (a >= b){
 				a -= b;
 			}
@@ -62,7 +62,7 @@ void SnakeGameServer::step(){
     	};
 		s->pos.first=transfer(s->pos.first, width);
 		s->pos.second=transfer(s->pos.second, height);
-		std::pair<double,double> prev2;
+		std::pair<float,float> prev2;
 		for (int i = 0; i < s->lenght; i++)
 		{
 			prev2 = s->parts[i];
@@ -92,7 +92,7 @@ void SnakeGameServer::send(int socket){
 	}
 }
 
-void SnakeGameServer::getSnakeDirection(int socket, uint16_t id){
+void SnakeGameServer::getSnakeDirection(int socket, int16_t id){
 	int ret;
 	direction tmp;
 	ret = read(socket, &tmp, sizeof(tmp));
@@ -103,14 +103,14 @@ void SnakeGameServer::getSnakeDirection(int socket, uint16_t id){
 	snakes[getSnakeIndexById(id)]->dir = tmp;
 }
 
-void SnakeGameServer::addPart(uint16_t id){
+void SnakeGameServer::addPart(int16_t id){
 	Snake * s = snakes[getSnakeIndexById(id)];
 	addPart(s);
 }
 
 void SnakeGameServer::addPart(Snake* s){
 	s->lenght++;
-	std::pair<double,double>* tmp = new std::pair<double,double>[s->lenght];
+	std::pair<float,float>* tmp = new std::pair<float,float>[s->lenght];
 	for(int i = 0; i < s->lenght - 1; i++){
 		tmp[i] = s->parts[i];
 	}

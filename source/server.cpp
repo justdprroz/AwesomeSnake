@@ -12,7 +12,6 @@ std::mutex serverMutex;
 void commsock(int arg){
     int newSocket = arg;
     int id = game.addSnake();
-    std::cout << id << '\n';
     write(newSocket, &id, sizeof(id));
     game.send(newSocket);
     while (true){

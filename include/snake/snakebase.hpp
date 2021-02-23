@@ -2,7 +2,7 @@
 #include <sys/socket.h> // socket
 #include <arpa/inet.h> // address control
 
-#include <cstdint> // uint16_t
+#include <cstdint> // int16_t
 #include <utility> // pairs
 #include <random> // random
 #include <thread> // thread
@@ -14,7 +14,7 @@
 enum direction { STOP, LEFT, RIGHT, UP, DOWN};
 
 template <typename T> 
-T getRandom(T a, T b) 
+T getRandomReal(T a, T b) 
 {
     std::random_device randomDevice;
     std::mt19937 randomGenerator(randomDevice());
@@ -24,25 +24,25 @@ T getRandom(T a, T b)
 
 struct Snake{
     Snake();
-    Snake(uint16_t i, uint16_t w, uint16_t h);
-    Snake(uint16_t i, double x, double y);
+    Snake(int16_t i, int16_t w, int16_t h);
+    Snake(int16_t i, float x, float y);
     bool alive;
     direction dir;
-    uint16_t id, lenght;
-    double step;
-    std::pair<double, double> pos, lpos;
-    std::pair<double, double>* parts;
+    int16_t id, lenght;
+    float step;
+    std::pair<float, float> pos, lpos;
+    std::pair<float, float>* parts;
 };
 
 class SnakeGameBase {
 public:
-    SnakeGameBase(uint16_t msa, uint16_t fa);
-    SnakeGameBase(uint16_t w, uint16_t h, uint16_t msa, uint16_t fa);
-    uint16_t getSnakeIndexById(uint16_t id);
-    uint16_t getSnakeId(Snake* s);
+    SnakeGameBase(int16_t msa, int16_t fa);
+    SnakeGameBase(int16_t w, int16_t h, int16_t msa, int16_t fa);
+    int16_t getSnakeIndexById(int16_t id);
+    int16_t getSnakeId(Snake* s);
 protected:
-    uint16_t width, height;
-    uint16_t snakesAmount, fruitsAmount, maxSnakesAmount;
+    int16_t width, height;
+    int16_t snakesAmount, fruitsAmount, maxSnakesAmount;
     Snake** snakes;
-    std::pair<double, double>* fruits;
+    std::pair<float, float>* fruits;
 };
