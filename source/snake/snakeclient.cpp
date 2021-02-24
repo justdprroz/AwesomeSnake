@@ -12,6 +12,7 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
         for (int i = s->lenght - 1; i >= 0; i--){
+			std::cout << i << ' ' << s->parts[i].head.first << ' ' << s->parts[i].head.second << ' ' << s->parts[i].back.first << ' ' << s->parts[i].back.second << '\n';
             cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.first - s->parts[i].back.first) * 20 + 20, std::abs(s->parts[i].head.second - s->parts[i].back.second) * 20 + 20));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
@@ -20,9 +21,6 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-            // cell.setPosition(s->parts[i].first * 20, s->parts[i].second * 20);с
-			std::cout << s->parts[i].head.first << ' ' << s->parts[i].back.first << '\n';
-			std::cout << std::min(s->parts[i].head.first, s->parts[i].back.first) * 20 - 10 << ' ' << std::min(s->parts[i].head.second, s->parts[i].back.second) * 20 - 10 << '\n';
 			cell.setPosition(std::min(s->parts[i].head.first, s->parts[i].back.first) * 20 - 10, std::min(s->parts[i].head.second, s->parts[i].back.second) * 20 - 10);
             w->draw(cell);
         }
@@ -77,7 +75,6 @@ void SnakeGameClient::get(int socket){
 	    s->parts = new SnakePart[s->lenght];
 	    for(int i = 0; i < s->lenght; i++){
             int ret;
-            // ret = read(socket, &s->parts[i], sizeof(s->parts[i]));
 			ret = read(socket, &s->parts[i].head, sizeof(s->parts[i].head));
 			ret = read(socket, &s->parts[i].back, sizeof(s->parts[i].back));
             if( (ret == -1 || ret != sizeof(s->parts[i].head))) {

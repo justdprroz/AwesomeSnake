@@ -10,12 +10,6 @@ SnakePart::SnakePart(std::pair<float, float> p){
     back = p;
 }
 
-// SnakePart::SnakePart(std::pair<float, float> l, std::pair<float, float> r, std::pair<float, float> v) {
-//     lu = l;
-//     rd = r;
-//     ve = v;
-// }
-
 Snake::Snake(int16_t i, float x, float y){
     id = i;
     pos = {x, y};

@@ -30,15 +30,6 @@ struct SnakePart {
     std::pair<float, float> back;
 };
 
-// struct SnakePart {
-//     SnakePart();
-//     SnakePart(std::pair<float, float> l, std::pair<float, float> r, std::pair<float, float> v);
-//     std::pair<float, float> lu;
-//     std::pair<float, float> rd;
-//     std::pair<float, float> ve;
-// };
-
-
 struct Snake{
     Snake();
     Snake(int16_t i, float x, float y);
