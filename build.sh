@@ -1,10 +1,12 @@
+#!/bin/bash
 [ ! -d build ] && mkdir build
 [ ! -d tmp ] && mkdir tmp
 cd tmp
-if [ "$1" == "0" ]; then
-    cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
-fi
-if [ "$1" == "1" ]; then
+if [ $# -eq 0 ]; then
     cmake -DCMAKE_BUILD_TYPE=Release ..
+else
+    if [ "$1" == "Debug" ] || [ "$1" == "D" ] || [ "$1" == "debug" ] || [ "$1" == "d" ]; then
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+    fi
 fi
 make

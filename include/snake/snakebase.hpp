@@ -1,0 +1,64 @@
+#include <unistd.h> // read() write() close()
+#include <sys/socket.h> // socket
+#include <arpa/inet.h> // address control
+
+#include <cstdint> // int16_t
+#include <utility> // pairs
+#include <random> // random
+#include <thread> // thread
+#include <chrono> // timeformats
+#include <mutex> // mutex
+#include <iostream> // ...
+#include <math.h> // ..
+
+enum direction { STOP, LEFT, RIGHT, UP, DOWN};
+
+template <typename T> 
+T getRandomReal(T a, T b) 
+{
+    std::random_device randomDevice;
+    std::mt19937 randomGenerator(randomDevice());
+    std::uniform_real_distribution<T> distrib(a, b);
+    return distrib(randomGenerator);
+}
+
+struct SnakePart {
+    SnakePart() = default;
+    SnakePart(std::pair<float, float> h, std::pair<float, float> b);
+    SnakePart(std::pair<float, float> p);
+    std::pair<float, float> head;
+    std::pair<float, float> back;
+};
+
+// struct SnakePart {
+//     SnakePart();
+//     SnakePart(std::pair<float, float> l, std::pair<float, float> r, std::pair<float, float> v);
+//     std::pair<float, float> lu;
+//     std::pair<float, float> rd;
+//     std::pair<float, float> ve;
+// };
+
+
+struct Snake{
+    Snake();
+    Snake(int16_t i, float x, float y);
+    bool alive;
+    direction dir;
+    int16_t id, lenght;
+    float step;
+    std::pair<float, float> pos, lpos;
+    SnakePart* parts;
+};
+
+class SnakeGameBase {
+public:
+    SnakeGameBase(int16_t msa, int16_t fa);
+    SnakeGameBase(int16_t w, int16_t h, int16_t msa, int16_t fa);
+    int16_t getSnakeIndexById(int16_t id);
+    int16_t getSnakeId(Snake* s);
+protected:
+    int16_t width, height;
+    int16_t snakesAmount, fruitsAmount, maxSnakesAmount;
+    Snake** snakes;
+    std::pair<float, float>* fruits;
+};
