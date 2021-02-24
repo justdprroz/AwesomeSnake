@@ -25,7 +25,7 @@ Snake::Snake(int16_t i, float x, float y){
     step = 1;
     lpos = pos;
     parts = new SnakePart[1];
-    parts[0] = SnakePart({x, y}, {x + 1, y + 1});
+    parts[0] = SnakePart({x, y});
 }
 
 SnakeGameBase::SnakeGameBase(int16_t msa, int16_t fa){

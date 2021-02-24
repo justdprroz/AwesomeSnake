@@ -12,7 +12,7 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
         for (int i = s->lenght - 1; i >= 0; i--){
-            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.first - s->parts[i].back.first) + 20, std::abs(s->parts[i].head.second - s->parts[i].back.second) + 20));
+            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.first - s->parts[i].back.first) * 20 + 20, std::abs(s->parts[i].head.second - s->parts[i].back.second) * 20 + 20));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
                 cell.setFillColor(sf::Color(255, 255, 255, 255));
@@ -79,7 +79,7 @@ void SnakeGameClient::get(int socket){
             int ret;
             // ret = read(socket, &s->parts[i], sizeof(s->parts[i]));
 			ret = read(socket, &s->parts[i].head, sizeof(s->parts[i].head));
-			ret = read(socket, &s->parts[i].head, sizeof(s->parts[i].head));
+			ret = read(socket, &s->parts[i].back, sizeof(s->parts[i].back));
             if( (ret == -1 || ret != sizeof(s->parts[i].head))) {
                 std::cout << "Error readind PART " << i << '\n';
             }
