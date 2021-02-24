@@ -1,17 +1,5 @@
 #include "snake/snakebase.hpp"
 
-Snake::Snake(int16_t i, int16_t w, int16_t h){
-    id = i;
-    pos = {getRandomReal<float>(0, w), getRandomReal<float>(0, h)};
-    alive = true;
-    dir = STOP;
-    lenght = 1;
-    step = 1.1;
-    lpos = pos;
-    parts = new std::pair<float, float>[1];
-    parts[0] = {lpos.first, lpos.second};
-}
-
 Snake::Snake(int16_t i, float x, float y){
     id = i;
     pos = {x, y};
@@ -19,7 +7,7 @@ Snake::Snake(int16_t i, float x, float y){
     alive = true;
     dir = STOP;
     lenght = 1;
-    step = 1.1;
+    step = 1;
     lpos = pos;
     parts = new std::pair<float, float>[1];
     parts[0] = {lpos.first, lpos.second};

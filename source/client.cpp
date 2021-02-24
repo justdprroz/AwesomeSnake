@@ -27,7 +27,7 @@ int main(int argc, char const *argv[])
     sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
 	sf::View view;
 	view.setSize(sf::Vector2f(Width, Height));
-	SnakeGameClient game(50, 50, 10, 10);
+	SnakeGameClient game(100, 100, 10, 10);
 	game.get(sock);
 	window.setView(view);
 	while (window.isOpen())

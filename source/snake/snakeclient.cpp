@@ -3,16 +3,16 @@
 void SnakeGameClient::draw(sf::RenderWindow* w, int as){
 	for(int i = 0; i < fruitsAmount; i++){
 		sf::RectangleShape cell;
-		cell.setSize(sf::Vector2f(20, 20));
+		cell.setSize(sf::Vector2f(10, 10));
 		cell.setFillColor(sf::Color::Red);
-		cell.setPosition(fruits[i].first * 20, fruits[i].second * 20);
+		cell.setPosition(fruits[i].first * 10, fruits[i].second * 10);
 		w->draw(cell);
 	}
 	for(int i = 0; i < snakesAmount; i++){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
         for (int i = s->lenght - 1; i >= 0; i--){
-            cell.setSize(sf::Vector2f(20, 20));
+            cell.setSize(sf::Vector2f(10, 10));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
                 cell.setFillColor(sf::Color(R, G, B, 255));
@@ -20,7 +20,7 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-            cell.setPosition(s->parts[i].first * 20, s->parts[i].second * 20);
+            cell.setPosition(s->parts[i].first * 10, s->parts[i].second * 10);
             w->draw(cell);
         }
     };
@@ -92,16 +92,20 @@ void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
     Snake* s = snakes[getSnakeIndexById(id)];
     if(e.type == sf::Event::KeyPressed){
 		if (e.key.code == sf::Keyboard::W){
-			s->dir = UP;
+			if(s->dir != DOWN)
+				s->dir = UP;
 		}
 		if (e.key.code == sf::Keyboard::D){
-			s->dir = RIGHT;
+			if(s->dir != LEFT)
+				s->dir = RIGHT;
 		}
 		if (e.key.code == sf::Keyboard::S){
-			s->dir = DOWN;
+			if(s->dir != UP)
+				s->dir = DOWN;
 		}
 		if (e.key.code == sf::Keyboard::A){
-			s->dir = LEFT;
+			if(s->dir != RIGHT)
+				s->dir = LEFT;
 		}
 	}
 }

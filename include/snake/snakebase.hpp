@@ -24,7 +24,6 @@ T getRandomReal(T a, T b)
 
 struct Snake{
     Snake();
-    Snake(int16_t i, int16_t w, int16_t h);
     Snake(int16_t i, float x, float y);
     bool alive;
     direction dir;
