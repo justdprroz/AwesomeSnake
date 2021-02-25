@@ -5,7 +5,7 @@ int serverSocket, newSocket, opt = 1;
 sockaddr_in address;
 sockaddr_storage serverStorage;
 socklen_t addr_size;
-SnakeGameServer game(50,50,10,10);
+SnakeGameServer game(100,100,10,20);
 bool l = false;
 std::mutex serverMutex;
 

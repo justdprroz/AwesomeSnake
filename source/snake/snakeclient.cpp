@@ -3,27 +3,30 @@
 void SnakeGameClient::draw(sf::RenderWindow* w, int as){
 	for(int i = 0; i < fruitsAmount; i++){
 		sf::RectangleShape cell;
-		cell.setSize(sf::Vector2f(20, 20));
+		cell.setSize(sf::Vector2f(10, 10));
 		cell.setFillColor(sf::Color::Red);
-		cell.setPosition(fruits[i].first * 20, fruits[i].second * 20);
+		cell.setPosition(fruits[i].first * 10, fruits[i].second * 10);
 		w->draw(cell);
 	}
 	for(int i = 0; i < snakesAmount; i++){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
-        for (int i = s->lenght - 1; i >= 0; i--){
-			std::cout << i << ' ' << s->parts[i].head.first << ' ' << s->parts[i].head.second << ' ' << s->parts[i].back.first << ' ' << s->parts[i].back.second << '\n';
-            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.first - s->parts[i].back.first) * 20 + 20, std::abs(s->parts[i].head.second - s->parts[i].back.second) * 20 + 20));
+        for (int i = 0; i < s->lenght; i++){
+            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.x - s->parts[i].back.x) * 10 + 10, std::abs(s->parts[i].head.y - s->parts[i].back.y) * 10 + 10));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
-                cell.setFillColor(sf::Color(255, 255, 255, 255));
+                cell.setFillColor(sf::Color(R, G, B, 255));
             } else {
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-			cell.setPosition(std::min(s->parts[i].head.first, s->parts[i].back.first) * 20 - 10, std::min(s->parts[i].head.second, s->parts[i].back.second) * 20 - 10);
+			cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
             w->draw(cell);
         }
+		cell.setSize({5, 5});
+		cell.setPosition({s->pos.first * 10, s->pos.second * 10});
+		cell.setFillColor(sf::Color::Red);
+		w->draw(cell);
     };
 }
 
@@ -94,16 +97,20 @@ void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
     Snake* s = snakes[getSnakeIndexById(id)];
     if(e.type == sf::Event::KeyPressed){
 		if (e.key.code == sf::Keyboard::W){
-			s->dir = UP;
+			if (s->dir != DOWN)
+				s->dir = UP;
 		}
 		if (e.key.code == sf::Keyboard::D){
-			s->dir = RIGHT;
+			if (s->dir != LEFT)
+				s->dir = RIGHT;
 		}
 		if (e.key.code == sf::Keyboard::S){
-			s->dir = DOWN;
+			if (s->dir != UP)
+				s->dir = DOWN;
 		}
 		if (e.key.code == sf::Keyboard::A){
-			s->dir = LEFT;
+			if (s->dir != RIGHT)
+				s->dir = LEFT;
 		}
 	}
 }

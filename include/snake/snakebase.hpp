@@ -22,12 +22,34 @@ T getRandomReal(T a, T b)
     return distrib(randomGenerator);
 }
 
+template <typename T, typename K>
+struct vec2 {
+    vec2() = default;
+    vec2(T _x, K _y) : x(_x), y(_y) {};
+    vec2(T _x) : x(_x), y(_x) {};
+    T x;
+    K y;
+    bool operator==(vec2 other){
+        return (this->x == other.x  && this->y == other.y);
+    }
+    void operator+=(vec2 other){
+        this->x += other.x;
+        this->y += other.y;
+    }
+};
+
+template <typename T>
+int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 struct SnakePart {
     SnakePart() = default;
-    SnakePart(std::pair<float, float> h, std::pair<float, float> b);
-    SnakePart(std::pair<float, float> p);
-    std::pair<float, float> head;
-    std::pair<float, float> back;
+    SnakePart(vec2<float,float> h, vec2<float,float> b, vec2<float,float> vh, vec2<float,float> vb);
+    vec2<float,float> head;
+    vec2<float,float> back;
+    vec2<float,float> vecHead;
+    vec2<float,float> vecBack;
 };
 
 struct Snake{
@@ -43,6 +65,7 @@ struct Snake{
 
 class SnakeGameBase {
 public:
+    SnakeGameBase() = default;
     SnakeGameBase(int16_t msa, int16_t fa);
     SnakeGameBase(int16_t w, int16_t h, int16_t msa, int16_t fa);
     int16_t getSnakeIndexById(int16_t id);

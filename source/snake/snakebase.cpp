@@ -1,13 +1,10 @@
 #include "snake/snakebase.hpp"
 
-SnakePart::SnakePart(std::pair<float, float> h, std::pair<float, float> b){
+SnakePart::SnakePart(vec2<float,float> h, vec2<float,float> b, vec2<float,float> vh, vec2<float,float> vb){
     head = h;
     back = b;
-}
-
-SnakePart::SnakePart(std::pair<float, float> p){
-    head = p;
-    back = p;
+    vecHead = vh;
+    vecBack = vb;
 }
 
 Snake::Snake(int16_t i, float x, float y){
@@ -19,7 +16,7 @@ Snake::Snake(int16_t i, float x, float y){
     step = 1;
     lpos = pos;
     parts = new SnakePart[1];
-    parts[0] = SnakePart({x, y});
+    parts[0] = SnakePart({x, y}, {x, y}, {0, 0}, {0, 0});
 }
 
 SnakeGameBase::SnakeGameBase(int16_t msa, int16_t fa){
