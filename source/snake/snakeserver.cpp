@@ -3,7 +3,7 @@
 int16_t SnakeGameServer::addSnake(){
     if (snakesAmount == maxSnakesAmount) return -1;
 	snakesAmount++;
-	snakes[snakesAmount - 1] = new Snake(snakesAmount, 20, 20);
+	snakes[snakesAmount - 1] = new Snake(snakesAmount, getRandomReal<float>(0, width - 1), getRandomReal<float>(0, height - 1));
 	return getSnakeId(snakes[snakesAmount - 1]);
 }
 

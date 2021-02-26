@@ -32,17 +32,19 @@ sh build.sh Debug/debug/D/d
 
 **For server**  
 Command  
-```./build/snakeserver <ip> <port>```
+```./build/server <ip> <port>```
 
 Example 
 ```bash
-./build/snakeserver 127.0.0.1 36876
+./build/server 
+./build/server 127.0.0.1 36876
 ```
 **For client**  
 Command  
-```./build/snakeclient <ip> <port>```
+```./build/client <ip> <port>```
 
 Example  
 ```bash
-./build/snakeclient 127.0.0.1 36876
+./build/client
+./build/client 127.0.0.1 36876
 ```

@@ -20,7 +20,7 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-			cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
+			      cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
             w->draw(cell);
         }
 		cell.setSize({5, 5});
@@ -110,6 +110,7 @@ void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
 		}
 		if (e.key.code == sf::Keyboard::A){
 			if (s->dir != RIGHT)
+
 				s->dir = LEFT;
 		}
 	}

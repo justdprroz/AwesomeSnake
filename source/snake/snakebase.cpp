@@ -6,7 +6,6 @@ SnakePart::SnakePart(vec2<float,float> h, vec2<float,float> b, vec2<float,float>
     vecHead = vh;
     vecBack = vb;
 }
-
 Snake::Snake(int16_t i, float x, float y){
     id = i;
     pos = {x, y};
