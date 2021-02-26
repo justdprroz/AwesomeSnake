@@ -11,8 +11,8 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
 	for(int i = 0; i < snakesAmount; i++){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
-        for (int i = s->lenght - 1; i >= 0; i--){
-            cell.setSize(sf::Vector2f(10, 10));
+        for (int i = 0; i < s->lenght; i++){
+            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.x - s->parts[i].back.x) * 10 + 10, std::abs(s->parts[i].head.y - s->parts[i].back.y) * 10 + 10));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
                 cell.setFillColor(sf::Color(R, G, B, 255));
@@ -20,9 +20,13 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-            cell.setPosition(s->parts[i].first * 10, s->parts[i].second * 10);
+			      cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
             w->draw(cell);
         }
+		cell.setSize({5, 5});
+		cell.setPosition({s->pos.first * 10, s->pos.second * 10});
+		cell.setFillColor(sf::Color::Red);
+		w->draw(cell);
     };
 }
 
@@ -71,11 +75,12 @@ void SnakeGameClient::get(int socket){
             std::cout << "Error readind LEN\n";
         }
         delete s->parts;
-	    s->parts = new std::pair<float, float>[s->lenght];
+	    s->parts = new SnakePart[s->lenght];
 	    for(int i = 0; i < s->lenght; i++){
             int ret;
-            ret = read(socket, &s->parts[i], sizeof(s->parts[i]));
-            if( (ret == -1 || ret != sizeof(s->parts[i]))) {
+			ret = read(socket, &s->parts[i].head, sizeof(s->parts[i].head));
+			ret = read(socket, &s->parts[i].back, sizeof(s->parts[i].back));
+            if( (ret == -1 || ret != sizeof(s->parts[i].head))) {
                 std::cout << "Error readind PART " << i << '\n';
             }
 	    }
@@ -92,19 +97,20 @@ void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
     Snake* s = snakes[getSnakeIndexById(id)];
     if(e.type == sf::Event::KeyPressed){
 		if (e.key.code == sf::Keyboard::W){
-			if(s->dir != DOWN)
+			if (s->dir != DOWN)
 				s->dir = UP;
 		}
 		if (e.key.code == sf::Keyboard::D){
-			if(s->dir != LEFT)
+			if (s->dir != LEFT)
 				s->dir = RIGHT;
 		}
 		if (e.key.code == sf::Keyboard::S){
-			if(s->dir != UP)
+			if (s->dir != UP)
 				s->dir = DOWN;
 		}
 		if (e.key.code == sf::Keyboard::A){
-			if(s->dir != RIGHT)
+			if (s->dir != RIGHT)
+
 				s->dir = LEFT;
 		}
 	}
