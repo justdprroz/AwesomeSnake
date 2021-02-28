@@ -5,14 +5,15 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
 		sf::RectangleShape cell;
 		cell.setSize(sf::Vector2f(10, 10));
 		cell.setFillColor(sf::Color::Red);
-		cell.setPosition(fruits[i].first * 10, fruits[i].second * 10);
+		cell.setPosition(fruits[i].x * 10, fruits[i].y * 10);
 		w->draw(cell);
 	}
 	for(int i = 0; i < snakesAmount; i++){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
         for (int i = 0; i < s->lenght; i++){
-            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.x - s->parts[i].back.x) * 10 + 10, std::abs(s->parts[i].head.y - s->parts[i].back.y) * 10 + 10));
+            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.x - s->parts[i].back.x) * 10 + 10, 
+							std::abs(s->parts[i].head.y - s->parts[i].back.y) * 10 + 10));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
                 cell.setFillColor(sf::Color(R, G, B, 255));
@@ -20,11 +21,12 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-			cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
+			cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, 
+								std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
             w->draw(cell);
         }
 		cell.setSize({5, 5});
-		cell.setPosition({s->pos.first * 10, s->pos.second * 10});
+		cell.setPosition({s->pos.x * 10, s->pos.y * 10});
 		cell.setFillColor(sf::Color::Red);
 		w->draw(cell);
     };
@@ -62,6 +64,10 @@ void SnakeGameClient::get(int socket){
         if( (ret == -1 || ret != sizeof(s->dir))) {
             std::cout << "Error readind DIR\n";
         }
+		ret = read(socket, &s->sdir, sizeof(s->sdir));
+        if( (ret == -1 || ret != sizeof(s->sdir))) {
+            std::cout << "Error readind sDIR\n";
+        }
         ret = read(socket, &s->id, sizeof(s->id));
         if( (ret == -1 || ret != sizeof(s->id))) {
             std::cout << "Error readind ID\n";
@@ -97,19 +103,19 @@ void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
     Snake* s = snakes[getSnakeIndexById(id)];
     if(e.type == sf::Event::KeyPressed){
 		if (e.key.code == sf::Keyboard::W){
-			if (s->dir != DOWN)
+			if (s->sdir != DOWN)
 				s->dir = UP;
 		}
 		if (e.key.code == sf::Keyboard::D){
-			if (s->dir != LEFT)
+			if (s->sdir != LEFT)
 				s->dir = RIGHT;
 		}
 		if (e.key.code == sf::Keyboard::S){
-			if (s->dir != UP)
+			if (s->sdir != UP)
 				s->dir = DOWN;
 		}
 		if (e.key.code == sf::Keyboard::A){
-			if (s->dir != RIGHT)
+			if (s->sdir != RIGHT)
 				s->dir = LEFT;
 		}
 	}
