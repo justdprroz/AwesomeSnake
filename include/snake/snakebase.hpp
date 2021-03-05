@@ -11,55 +11,30 @@
 #include <iostream> // ...
 #include <math.h> // ..
 
+#include <utils.hpp>
+
 enum direction { STOP, LEFT, RIGHT, UP, DOWN};
-
-template <typename T> 
-T getRandomReal(T a, T b) 
-{
-    std::random_device randomDevice;
-    std::mt19937 randomGenerator(randomDevice());
-    std::uniform_real_distribution<T> distrib(a, b);
-    return distrib(randomGenerator);
-}
-
-template <typename T, typename K>
-struct vec2 {
-    vec2() = default;
-    vec2(T _x, K _y) : x(_x), y(_y) {};
-    vec2(T _x) : x(_x), y(_x) {};
-    T x;
-    K y;
-    bool operator==(vec2 other){
-        return (this->x == other.x  && this->y == other.y);
-    }
-    void operator+=(vec2 other){
-        this->x += other.x;
-        this->y += other.y;
-    }
-};
-
-template <typename T>
-int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
 
 struct SnakePart {
     SnakePart() = default;
-    SnakePart(vec2<float,float> h, vec2<float,float> b, vec2<float,float> vh, vec2<float,float> vb);
-    vec2<float,float> head;
-    vec2<float,float> back;
-    vec2<float,float> vecHead;
-    vec2<float,float> vecBack;
+    SnakePart(vec2f h, vec2f b, vec2f vh, vec2f vb);
+    vec2f head;
+    vec2f back;
+    vec2f vecHead;
+    vec2f vecBack;
 };
 
 struct Snake{
     Snake();
     Snake(int16_t i, float x, float y);
+    Snake(int16_t i, vec2f p);
+    Snake(int16_t i, float s, float g, vec2f p);
     bool alive;
-    direction dir;
+    direction dir, sdir;
     int16_t id, lenght;
     float step;
-    std::pair<float, float> pos, lpos;
+    float growth;
+    vec2f pos, lpos;
     SnakePart* parts;
 };
 
@@ -74,5 +49,5 @@ protected:
     int16_t width, height;
     int16_t snakesAmount, fruitsAmount, maxSnakesAmount;
     Snake** snakes;
-    std::pair<float, float>* fruits;
+    vec2f* fruits;
 };

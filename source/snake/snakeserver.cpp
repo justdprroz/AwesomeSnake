@@ -24,72 +24,81 @@ void SnakeGameServer::step(){
 		Snake* s = snakes[i];
 		for(int i = 0; i <= fruitsAmount; i++){
 			float dx, dy;
-			dx = s->pos.first - fruits[i].first;
-			dy = s->pos.second - fruits[i].second;
-			int range = 40;
+			dx = s->pos.x - fruits[i].x;
+			dy = s->pos.y - fruits[i].y;
+			int range = 1;
 			if( -range <= dx && dx <= range && -range <= dy && dy <= range){
-				fruits[i].first = getRandomReal<float>(0, width - 1);
-				fruits[i].second = getRandomReal<float>(0, height - 1);
+				fruits[i].x = getRandomReal<float>(0, width - 1);
+				fruits[i].y = getRandomReal<float>(0, height - 1);
 				addPart(s);
 			}
 		}
 
-		std::pair<float, float> lvec = {s->pos.first - s->lpos.first, s->pos.second - s->lpos.second};
+		vec2f lvec = {s->pos.x - s->lpos.x, s->pos.y - s->lpos.y};
 
 		s->lpos = s->pos;
 		
+		s->sdir = s->dir;
+
 		switch (s->dir) {
 			case LEFT:
-				s->pos.first-=s->step;
+				s->pos.x-=s->step;
 				break;
 			case RIGHT:
-				s->pos.first+=s->step;
+				s->pos.x+=s->step;
 				break;
 			case UP:
-				s->pos.second-=s->step;
+				s->pos.y-=s->step;
 				break;
 			case DOWN:
-				s->pos.second+=s->step;
+				s->pos.y+=s->step;
 				break;
 			default:
 				break;
 		}
 
-		std::pair<float, float> vec = {s->pos.first - s->lpos.first, s->pos.second - s->lpos.second};
+		vec2f vec = {s->pos.x - s->lpos.x, s->pos.y - s->lpos.y};
 
-		if (vec.first != lvec.first && vec.second != lvec.second){
+		if (vec != lvec){
 			SnakePart* tmp = new SnakePart[s->lenght + 1];
 			for(int i = 0; i < s->lenght; i++){
 				tmp[i] = s->parts[i];
 			}
-			tmp[s->lenght] = SnakePart{{s->lpos.first, s->lpos.second}, {s->lpos.first, s->lpos.second}, {sgn(vec.first), sgn(vec.second)}, {-sgn(vec.first), -sgn(vec.second)}};
+			tmp[s->lenght] = SnakePart{s->lpos, s->lpos, {float(sgn(vec.x)), float(sgn(vec.y))}, 
+										{float(-sgn(vec.x)), float(-sgn(vec.y))}};
 			delete[] s->parts;
 			s->parts = tmp;
 			s->lenght++;
 		}
 
-		if(s->parts[s->lenght - 1].vecHead == vec2<float, float>{0, 0}) {
-			s->parts[s->lenght - 1].vecHead = vec2<float, float>({sgn(vec.first), sgn(vec.second)});
+		if(s->parts[s->lenght - 1].vecHead == vec2f{0, 0}) {
+			s->parts[s->lenght - 1].vecHead = vec2f({float(sgn(vec.x)), float(sgn(vec.y))});
 		}
 		
-		if(s->parts[s->lenght - 1].vecBack == vec2<float, float>{0, 0}) {
-			s->parts[s->lenght - 1].vecBack = vec2<float, float>({-sgn(vec.first), -sgn(vec.second)});
+		if(s->parts[s->lenght - 1].vecBack == vec2f{0, 0}) {
+			s->parts[s->lenght - 1].vecBack = vec2f({float(-sgn(vec.x)), float(-sgn(vec.y))});
 		}
 
-		s->parts[s->lenght - 1].head.x += vec.first;
-		s->parts[s->lenght - 1].head.y += vec.second;
+		SnakePart* first = &s->parts[s->lenght - 1];
 
-		SnakePart* last = &s->parts[0];
+		first->head.x += first->vecHead.x * s->step;
+		first->head.y += first->vecHead.y * s->step;
 
 		int toDelete = 0;
-		float path = std::sqrt(vec.first * vec.first + vec.second * vec.second);
-		float backLenght = std::sqrt(std::pow(s->parts[toDelete].head.x - s->parts[toDelete].back.x, 2) + std::pow(s->parts[toDelete].head.y - s->parts[toDelete].back.y, 2));
+		SnakePart* last = &s->parts[toDelete];
+
+		float path = std::sqrt(std::pow(vec.x, 2) + std::pow(vec.y, 2));
+		float backLenght = std::sqrt(std::pow(last->head.x - last->back.x, 2) + 
+										std::pow(last->head.y - last->back.y, 2));
 		
 		while(path > backLenght){
 			path -= backLenght;
 			toDelete++;
-			backLenght = std::sqrt(std::pow(s->parts[toDelete].head.x - s->parts[toDelete].back.x, 2) + std::pow(s->parts[toDelete].head.y - s->parts[toDelete].back.y, 2));
+			last = &s->parts[toDelete];
+			backLenght = std::sqrt(std::pow(last->head.x - last->back.x, 2) + 
+										std::pow(last->head.y - last->back.y, 2));
 		}
+
 		SnakePart* tmp = new SnakePart[s->lenght - toDelete];
 		for(int i = 0; i < s->lenght - toDelete; i++){
 			tmp[i] = s->parts[i + toDelete];
@@ -97,11 +106,14 @@ void SnakeGameServer::step(){
 		delete[] s->parts;
 		s->parts = tmp;
 		s->lenght -= toDelete;
-		backLenght = std::sqrt(std::pow(s->parts[0].head.x - s->parts[0].back.x, 2) + std::pow(s->parts[0].head.y - s->parts[0].back.y, 2));
-		if (s->dir != STOP){
+		
+		last = &s->parts[0];
+
+		backLenght = std::sqrt(std::pow(last->head.x - last->back.x, 2) + 
+								std::pow(last->head.y - last->back.y, 2));
+		if (s->dir != STOP) {
 			float ratio = path / backLenght;
-			s->parts[0].back.x += ((s->parts[0].head.x - s->parts[0].back.x) * ratio);
-			s->parts[0].back.y += ((s->parts[0].head.y - s->parts[0].back.y) * ratio);
+			last->back += (last->head - last->back) * ratio;
 		}
     }
 }
@@ -117,11 +129,11 @@ void SnakeGameServer::send(int socket){
 	for(int i = 0; i < snakesAmount; i++){
 		Snake* s = snakes[i];
 		write(socket, &s->dir, sizeof(s->dir));
+		write(socket, &s->sdir, sizeof(s->sdir));
 		write(socket, &s->id, sizeof(s->id));
 		write(socket, &s->pos, sizeof(s->pos));
 		write(socket, &s->lenght, sizeof(s->lenght));
 		for(int i = 0; i < s->lenght; i++) {
-			// write(socket, &s->parts[i], sizeof(s->parts[i]));
 			write(socket, &s->parts[i].head, sizeof(s->parts[i].head));
 			write(socket, &s->parts[i].back, sizeof(s->parts[i].back));
 		}	
@@ -145,10 +157,5 @@ void SnakeGameServer::addPart(int16_t id){
 }
 
 void SnakeGameServer::addPart(Snake* s){
-	// if (s->dir != STOP){
-	// 	std::pair<float, float> vec = {s->pos.first - s->lpos.first, s->pos.second - s->lpos.second};
-	// 	s->parts[0].back.x += ((s->parts[0].head.x - s->parts[0].back.x) * -1);
-	// 	s->parts[0].back.y += ((s->parts[0].head.y - s->parts[0].back.y) * -1);
-	// }
-	s->parts[0].back += s->parts[0].vecBack;
+	s->parts[0].back += s->parts[0].vecBack * s->step;
 }

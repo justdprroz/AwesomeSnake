@@ -4,21 +4,6 @@
 
 My online snake game project
 
-## Requirements
-
-### **You must have [SFML library](https://www.sfml-dev.org/) installed**
-
-#### To install you can run one of this commands
-
-On Arch Linux:  
-```pacman -S sfml```
-
-On Ubuntu Linux:  
-```apt-get install libsfml-dev``` :question:
-
-On Widnows:  
-:exclamation::exclamation: **I am so sorry but Windows is unsupported** :exclamation::exclamation:
-
 ## Build & Run
 ### To build
 Run ```build.sh``` script without arguments to compile **Release** build or with *Debug/debug/D/d* to compile **Debug** build
