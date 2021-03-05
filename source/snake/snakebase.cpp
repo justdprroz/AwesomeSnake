@@ -8,6 +8,7 @@ SnakePart::SnakePart(vec2f h, vec2f b, vec2f vh, vec2f vb){
 }
 
 Snake::Snake(){
+
     alive = true;
     dir = STOP;
     lenght = 1;

@@ -24,10 +24,11 @@ int main(int argc, char const *argv[])
 	read(sock, &id, sizeof(id));
 	std::cout << id << '\n';
 	int Width = 1000, Height = 1000;
-    sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
+  sf::RenderWindow window(sf::VideoMode(Width, Height), "SFML works!");
 	sf::View view;
 	view.setSize(sf::Vector2f(Width, Height));
 	SnakeGameClient game(100,100,10,5);
+
 	game.get(sock);
 	window.setView(view);
 	while (window.isOpen())

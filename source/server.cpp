@@ -6,6 +6,7 @@ sockaddr_in address;
 sockaddr_storage serverStorage;
 socklen_t addr_size;
 SnakeGameServer game(100,100,10,5);
+
 bool l = false;
 std::mutex serverMutex;
 

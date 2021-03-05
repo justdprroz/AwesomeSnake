@@ -117,6 +117,7 @@ void SnakeGameClient::handleEvents(sf::Event e, int16_t id){
 		}
 		if (e.key.code == sf::Keyboard::A){
 			if (s->sdir != RIGHT)
+
 				s->dir = LEFT;
 		}
 	}
