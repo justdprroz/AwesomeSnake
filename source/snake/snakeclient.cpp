@@ -1,19 +1,20 @@
 #include "snake/snakeclient.hpp"
 
 void SnakeGameClient::draw(sf::RenderWindow* w, int as){
+	int tileSize = 10;
 	for(int i = 0; i < fruitsAmount; i++){
 		sf::RectangleShape cell;
-		cell.setSize(sf::Vector2f(10, 10));
+		cell.setSize(sf::Vector2f(tileSize, tileSize));
 		cell.setFillColor(sf::Color::Red);
-		cell.setPosition(fruits[i].x * 10, fruits[i].y * 10);
+		cell.setPosition(fruits[i].x * tileSize - tileSize / 2, fruits[i].y * tileSize - tileSize / 2);
 		w->draw(cell);
 	}
 	for(int i = 0; i < snakesAmount; i++){
         Snake* s = snakes[i];
         sf::RectangleShape cell;
         for (int i = 0; i < s->lenght; i++){
-            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.x - s->parts[i].back.x) * 10 + 10, 
-							std::abs(s->parts[i].head.y - s->parts[i].back.y) * 10 + 10));
+            cell.setSize(sf::Vector2f(std::abs(s->parts[i].head.x - s->parts[i].back.x) * tileSize + tileSize, 
+							std::abs(s->parts[i].head.y - s->parts[i].back.y) * tileSize + tileSize));
             int R = i * (255. / (s->lenght - 1 + (s->lenght == 1))), G = 255, B = 0;
             if(as == s->id){
                 cell.setFillColor(sf::Color(R, G, B, 255));
@@ -21,13 +22,13 @@ void SnakeGameClient::draw(sf::RenderWindow* w, int as){
                 int Y = 255 - (R + G + B) / 3;
                 cell.setFillColor(sf::Color(Y, Y, Y));
             }
-			cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * 10 - 5, 
-								std::min(s->parts[i].head.y, s->parts[i].back.y) * 10 - 5);
+			cell.setPosition(std::min(s->parts[i].head.x, s->parts[i].back.x) * tileSize - tileSize / 2, 
+								std::min(s->parts[i].head.y, s->parts[i].back.y) * tileSize - tileSize / 2);
             w->draw(cell);
         }
-		cell.setSize({5, 5});
-		cell.setPosition({s->pos.x * 10, s->pos.y * 10});
-		cell.setFillColor(sf::Color::Red);
+		cell.setSize({tileSize, tileSize});
+		cell.setPosition({s->pos.x * tileSize - tileSize / 2, s->pos.y * tileSize - tileSize / 2});
+		cell.setFillColor(sf::Color::Blue);
 		w->draw(cell);
     };
 }

@@ -111,10 +111,8 @@ void SnakeGameServer::step(){
 
 		backLenght = std::sqrt(std::pow(last->head.x - last->back.x, 2) + 
 								std::pow(last->head.y - last->back.y, 2));
-		if (s->dir != STOP){
+		if (s->dir != STOP) {
 			float ratio = path / backLenght;
-			// last->back.x += ((last->head.x - last->back.x) * ratio);
-			// last->back.y += ((last->head.y - last->back.y) * ratio);
 			last->back += (last->head - last->back) * ratio;
 		}
     }
