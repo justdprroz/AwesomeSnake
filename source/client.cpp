@@ -1,7 +1,6 @@
-// #include "snake/snake.hpp"
 #include "snake/snakeclient.hpp"
 
-int main(int argc, char const *argv[]) 
+int main(int argc, char const *argv[])
 {
 	int port = 22222;
 	const char* ip = "127.0.0.1";
@@ -13,7 +12,7 @@ int main(int argc, char const *argv[])
 	}
 	int sock = 0;
 	int signal = 100;
-	struct sockaddr_in serv_addr;  
+	struct sockaddr_in serv_addr;
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(port);
@@ -32,11 +31,11 @@ int main(int argc, char const *argv[])
 	game.get(sock);
 	window.setView(view);
 	while (window.isOpen())
-    {	
+    {
 		int sig;
 		sf::Event event;
         while (window.pollEvent(event))
-        {	
+        {
 			game.handleEvents(event, id);
             if (event.type == sf::Event::Closed){
                 window.close();
@@ -59,4 +58,4 @@ int main(int argc, char const *argv[])
 		window.display();
     }
 	return 0;
-} 
+}

@@ -1,4 +1,3 @@
-// #include "snake/snake.hpp"
 #include "snake/snakeserver.hpp"
 
 int serverSocket, newSocket, opt = 1;
@@ -42,8 +41,8 @@ void logic(){
     }
 }
 
-int main(int argc, char const *argv[]) 
-{   
+int main(int argc, char const *argv[])
+{
     int port = 22222;
 	const char* ip = "127.0.0.1";
 	if (argc > 1) {
@@ -55,7 +54,7 @@ int main(int argc, char const *argv[])
     srand(time(NULL));
 	serverSocket = socket(PF_INET, SOCK_STREAM, 0);
     setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt));
-	address.sin_family = AF_INET; 
+	address.sin_family = AF_INET;
 	address.sin_port = htons(port);
 	address.sin_addr.s_addr = inet_addr(ip);
 

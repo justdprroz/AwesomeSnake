@@ -13,7 +13,7 @@ Snake::Snake(){
     dir = STOP;
     lenght = 1;
     parts = new SnakePart[1];
-};
+};  
 
 Snake::Snake(int16_t i, float s, float g, vec2f p) : Snake(){
     id = i;
